@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>NutriPlan - Planificador Inteligente</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #fdf8f5;
+      }
+      body {
+        overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px); }
+      .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 12px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #a43d09;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(164, 61, 9, 0.4);
+      border: 3px solid #ffffff;
+    }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
+    @keyframes slideUp { from { transform:translateY(100%);} to {transform:translateY(0);} }
+    .animate-fadeIn { animation: fadeIn .22s ease-out both; }
+    .animate-slideUp { animation: slideUp .26s ease-out both; }
+    button:disabled { opacity:.45; cursor:not-allowed; transform:none !important; }
+    html.dark body, html.dark .bg-surface { background:#191714 !important; }
+    html.dark .bg-surface-container-lowest { background:#24211e !important; }
+    html.dark .bg-surface-container-low { background:#201d1a !important; }
+    html.dark .bg-surface-container { background:#2b2723 !important; }
+    html.dark .bg-surface-container-high { background:#342f2a !important; }
+    html.dark .bg-surface-container-highest { background:#3d3731 !important; }
+    html.dark .text-on-surface { color:#f7f1eb !important; }
+    html.dark .text-on-surface-variant { color:#cbbdb3 !important; }
+    html.dark .border-surface-container-high, html.dark .border-surface-container-highest, html.dark .border-surface-container { border-color:#4a433c !important; }
+    html.dark .bg-primary-fixed\/40, html.dark .bg-primary-fixed\/50, html.dark .bg-primary-fixed\/60, html.dark .bg-primary-fixed\/20, html.dark .bg-primary-fixed\/15 { background:rgba(232,111,59,.18) !important; }
+    html.dark input { color:#f7f1eb !important; background:#24211e !important; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#fdf8f5",
+            "surface-dim": "#ded9d6",
+            "surface-bright": "#fdf8f5",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f7f3ef",
+            "surface-container": "#f2ede9",
+            "surface-container-high": "#ece7e4",
+            "surface-container-highest": "#e6e2de",
+            "surface-variant": "#e6e2de",
+            "on-surface": "#1c1b19",
+            "on-surface-variant": "#57423a",
+            "primary": "#a43d09",
+            "primary-container": "#e86f3b",
+            "primary-fixed": "#ffdbce",
+            "primary-fixed-dim": "#ffb599",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#511800",
+            "secondary": "#376847",
+            "secondary-container": "#b6edc2",
+            "secondary-fixed": "#b9efc5",
+            "secondary-fixed-dim": "#9dd3aa",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed": "#00210e",
+            "on-secondary-container": "#1e5031",
+            "tertiary": "#835418",
+            "outline": "#8b7268",
+            "outline-variant": "#dec0b5",
+            "background": "#fdf8f5",
+            "error": "#b42318",
+            "error-container": "#fee4e2"
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-container">
+<!-- ========================================================================= -->
+<!-- 1. ONBOARDING WIZARD VIEW (ESTADO INICIAL PARA USUARIO NUEVO) -->
+<!-- ========================================================================= -->
+<div class="flex flex-col min-h-screen w-full relative" id="onboardingContainer">
+<!-- Top Bar Wizard: Minimalista con botón Volver & Paso X de 7 -->
+<header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md pt-safe border-b border-surface-container-high/60 transition-all">
+<div class="h-14 px-4 flex items-center justify-between">
+<button class="w-10 h-10 -ml-1 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-90 transition-all" id="wizardBackBtn" onclick="wizardPrevStep()">
+<span class="material-symbols-outlined text-[22px]">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="text-xs uppercase tracking-wider font-extrabold text-primary" id="wizardStepLabel">Paso 1 de 7</span>
+<span class="text-[11px] font-medium text-on-surface-variant flex items-center gap-1">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span> NutriPlan Primer Uso
+          </span>
+</div>
+<button class="text-xs font-semibold text-on-surface-variant hover:text-primary px-2 py-1 rounded-lg hidden" id="wizardSkipBtn" onclick="skipOptionalStep()">
+          Omitir
+        </button>
+</div>
+<!-- Barra fina de progreso -->
+<div class="w-full h-1 bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary transition-all duration-300 ease-out" id="wizardProgressBar" style="width: 14.28%;"></div>
+</div>
+</header>
+<!-- Contenido Scrollable de los Pasos -->
+<main class="flex-1 w-full max-w-md mx-auto px-5 py-6 flex flex-col justify-between pb-32">
+<!-- PASO 1: Supermercado -->
+<div class="wizard-step flex flex-col animate-fadeIn" id="step1">
+<div class="mb-6">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Establecimiento</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Dónde compras esta semana?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Usaremos un catálogo de referencia y precios estimados para adaptar tu planificación.</p>
+</div>
+<div class="space-y-3" id="marketList">
+<!-- Supermaxi -->
+<div class="market-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer shadow-sm transition-all active:scale-[0.98]" data-market="Supermaxi" onclick="selectMarket('Supermaxi', 'supermaxi')">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-orange-50 text-primary flex items-center justify-center font-bold text-xl border border-primary-fixed">
+<span class="material-symbols-outlined text-[26px]">storefront</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Supermaxi</h3>
+<p class="text-xs text-on-surface-variant">Catálogo de referencia • Amplia variedad</p>
+</div>
+</div>
+<div class="check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- Coral Hipermercados -->
+<div class="market-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-outline-variant transition-all active:scale-[0.98]" data-market="Coral Hipermercados" onclick="selectMarket('Coral Hipermercados', 'coral')">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low text-tertiary flex items-center justify-center font-bold text-xl">
+<span class="material-symbols-outlined text-[26px]">shopping_cart</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Coral Hipermercados</h3>
+<p class="text-xs text-on-surface-variant">Ideal para compras a granel y ahorro</p>
+</div>
+</div>
+<div class="check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- Gran Akí -->
+<div class="market-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-outline-variant transition-all active:scale-[0.98]" data-market="Gran Akí" onclick="selectMarket('Gran Akí', 'gran_aki')">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 text-secondary flex items-center justify-center font-bold text-xl">
+<span class="material-symbols-outlined text-[26px]">local_mall</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Gran Akí</h3>
+<p class="text-xs text-on-surface-variant">Precios populares y combos accesibles</p>
+</div>
+</div>
+<div class="check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- Almacenes Tía -->
+<div class="market-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-outline-variant transition-all active:scale-[0.98]" data-market="Almacenes Tía" onclick="selectMarket('Almacenes Tía', 'tia')">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xl">
+<span class="material-symbols-outlined text-[26px]">store</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Almacenes Tía</h3>
+<p class="text-xs text-on-surface-variant">Cercanía y ofertas relámpago</p>
+</div>
+</div>
+<div class="check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- Mercado local / Otro -->
+<div class="market-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-outline-variant transition-all active:scale-[0.98]" data-market="Mercado Local / Otro" onclick="selectMarket('Mercado Local / Otro', 'otro')">
+<div class="flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-xl bg-surface-container text-on-surface-variant flex items-center justify-center font-bold text-xl">
+<span class="material-symbols-outlined text-[26px]">local_convenience_store</span>
+</div>
+<div>
+<h3 class="font-bold text-base text-on-surface">Otro / Mercado local</h3>
+<p class="text-xs text-on-surface-variant">Promedios generales del mercado</p>
+</div>
+</div>
+<div class="check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+</div>
+</div>
+<!-- PASO 2: Presupuesto -->
+<div class="wizard-step hidden flex flex-col" id="step2">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Presupuesto</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Cuánto quieres gastar?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Define tu presupuesto máximo para esta planificación semanal.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-surface-container-high flex flex-col items-center my-auto">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Tope asignado</span>
+<div class="flex items-baseline justify-center gap-1.5 my-3">
+<span class="text-3xl font-extrabold text-primary">$</span>
+<input class="text-6xl font-extrabold text-on-surface tracking-tight w-36 text-center bg-transparent border-b-2 border-dashed border-primary-fixed focus:border-primary focus:outline-none" id="budgetNumberInput" max="300" min="20" oninput="onBudgetInputChange(this.value)" step="5" type="number" value="50"/>
+</div>
+<p class="text-xs text-center text-on-surface-variant max-w-[240px] mb-6">
+            Intentaremos mantener toda tu canasta dentro de este límite.
+          </p>
+<!-- Range Slider -->
+<div class="w-full px-2 mb-6">
+<input class="w-full h-2.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" id="budgetRange" max="180" min="20" oninput="onBudgetRangeChange(this.value)" step="5" type="range" value="50"/>
+<div class="flex justify-between text-[11px] font-bold text-on-surface-variant mt-2">
+<span>$20 min</span>
+<span>$100</span>
+<span>$180+</span>
+</div>
+</div>
+<!-- Botones rápidos -->
+<div class="grid grid-cols-4 gap-2 w-full">
+<button class="budget-pill py-2 rounded-xl text-xs font-bold border border-surface-container-highest bg-surface-container-low text-on-surface active:scale-95 transition-all" onclick="setBudget(30)">$30</button>
+<button class="budget-pill py-2 rounded-xl text-xs font-bold border-2 border-primary bg-primary-fixed/40 text-on-primary-container active:scale-95 transition-all shadow-xs" onclick="setBudget(50)">$50</button>
+<button class="budget-pill py-2 rounded-xl text-xs font-bold border border-surface-container-highest bg-surface-container-low text-on-surface active:scale-95 transition-all" onclick="setBudget(70)">$70</button>
+<button class="budget-pill py-2 rounded-xl text-xs font-bold border border-surface-container-highest bg-surface-container-low text-on-surface active:scale-95 transition-all" onclick="setBudget(100)">$100</button>
+</div>
+</div>
+<div class="mt-4 p-3.5 rounded-2xl bg-secondary-fixed/30 border border-secondary-container flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[22px]">savings</span>
+<span class="text-xs text-on-surface">Un presupuesto de <strong>$<span id="budgetTextPreview">50</span></strong> rinde aprox. $2.38 por porción para 1-2 personas.</span>
+</div>
+</div>
+<!-- PASO 3: Días y Personas -->
+<div class="wizard-step hidden flex flex-col" id="step3">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Alcance</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Cuántos días quieres planificar?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Puedes organizar toda la semana o solamente algunos días hábiles.</p>
+</div>
+<!-- Selector Días -->
+<div class="space-y-3 mb-6">
+<!-- 3 Días -->
+<div class="days-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all" data-days="3" onclick="selectDays(3)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-2xl">weekend</span>
+<div>
+<h4 class="font-bold text-base text-on-surface">3 días (Fines de semana o prueba)</h4>
+<p class="text-xs text-on-surface-variant">6 comidas principales aprox.</p>
+</div>
+</div>
+<div class="days-check w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- 5 Días -->
+<div class="days-card border-2 border-surface-container-high bg-surface-container-lowest p-4 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all" data-days="5" onclick="selectDays(5)">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-2xl">work</span>
+<div>
+<h4 class="font-bold text-base text-on-surface">5 días (Lunes a Viernes)</h4>
+<p class="text-xs text-on-surface-variant">Ideal para jornadas de trabajo</p>
+</div>
+</div>
+<div class="days-check w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<!-- 7 Días (Recomendado) -->
+<div class="days-card border-2 border-primary bg-primary-fixed/20 p-4 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all relative overflow-hidden" data-days="7" onclick="selectDays(7)">
+<span class="absolute top-2 right-2 text-[10px] font-extrabold uppercase bg-primary text-white px-2 py-0.5 rounded-full">Recomendado</span>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">calendar_month</span>
+<div>
+<h4 class="font-bold text-base text-on-surface">7 días (Semana completa)</h4>
+<p class="text-xs text-on-surface-variant">Máximo ahorro y cero desperdicio</p>
+</div>
+</div>
+<div class="days-check w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+</div>
+<!-- Selector Personas con Contador -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-surface-container-high flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-bold text-base text-on-surface">Porciones / Comensales</span>
+<span class="text-xs text-on-surface-variant">Calcularemos raciones exactas</span>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low px-3 py-1.5 rounded-full border border-surface-container">
+<button class="w-8 h-8 rounded-full bg-surface-container-lowest text-on-surface font-extrabold flex items-center justify-center shadow-xs active:scale-90 hover:bg-surface-container transition-all" onclick="changePeople(-1)">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+<span class="font-bold text-lg min-w-[20px] text-center text-on-surface" id="peopleCount">2</span>
+<button class="w-8 h-8 rounded-full bg-surface-container-lowest text-on-surface font-extrabold flex items-center justify-center shadow-xs active:scale-90 hover:bg-surface-container transition-all" onclick="changePeople(1)">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- PASO 4: Objetivos y Preferencias (ESTILO ORGÁNICO CON CHIPS '+' y '✓') -->
+<div class="wizard-step hidden flex flex-col" id="step4">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Objetivos y Preferencias</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Qué te importa?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Elige las preferencias que darán forma y sabor a tus menús.</p>
+</div>
+<!-- Contenedor Orgánico de Chips -->
+<div class="flex flex-wrap gap-2.5 pt-1" id="goalsChipGroup">
+<!-- Generados con JS o markup directo -->
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Alto en proteína')" type="button">
+<span class="text-base">💪</span>
+<span>Alto en proteína</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Saludable')" type="button">
+<span class="text-base">🥗</span>
+<span>Saludable</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Más verduras')" type="button">
+<span class="text-base">🥦</span>
+<span>Más verduras</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Rápido')" type="button">
+<span class="text-base">⚡</span>
+<span>Rápido</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Económico')" type="button">
+<span class="text-base">💰</span>
+<span>Económico</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Equilibrado')" type="button">
+<span class="text-base">🍚</span>
+<span>Equilibrado</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Antiinflamatorio')" type="button">
+<span class="text-base">🌿</span>
+<span>Antiinflamatorio</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Favoritos de familia')" type="button">
+<span class="text-base">👨‍👩‍👧</span>
+<span>Favoritos de familia</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Reconfortante')" type="button">
+<span class="text-base">🍲</span>
+<span>Reconfortante</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Batch cooking')" type="button">
+<span class="text-base">📦</span>
+<span>Batch cooking</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+<button class="goal-chip group inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface font-semibold text-sm active:scale-95 transition-all" onclick="toggleGoal(this, 'Bajo en carbos')" type="button">
+<span class="text-base">🥑</span>
+<span>Bajo en carbos</span>
+<span class="action-icon text-on-surface-variant text-base ml-1 font-bold">+</span>
+</button>
+</div>
+<p class="text-xs text-on-surface-variant mt-4">
+          💡 Puedes seleccionar varias opciones. Combinaremos los mejores platillos para tu perfil.
+        </p>
+</div>
+<!-- PASO 5: Alergias (Totalmente separado) -->
+<div class="wizard-step hidden flex flex-col" id="step5">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Restricciones Médicas</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Tienes alguna alergia?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Estos ingredientes serán excluidos estrictamente de cada ingrediente y receta.</p>
+</div>
+<!-- Opción Destacada: No tengo alergias -->
+<button class="w-full mb-4 p-3.5 rounded-2xl border-2 border-secondary bg-secondary-fixed/40 text-on-secondary-container font-bold text-sm flex items-center justify-between active:scale-[0.98] transition-all" id="noAllergiesBtn" onclick="toggleNoAllergies()" type="button">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<span>No tengo alergias alimentarias</span>
+</div>
+<span class="allergy-check material-symbols-outlined text-secondary font-bold">check_circle</span>
+</button>
+<!-- Chips de Alergias -->
+<div class="flex flex-wrap gap-2.5 opacity-60 pointer-events-none transition-opacity" id="allergiesChipsContainer">
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Lactosa')" type="button">
+<span>🥛 Lactosa</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Gluten')" type="button">
+<span>🌾 Gluten</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Maní')" type="button">
+<span>🥜 Maní</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Frutos secos')" type="button">
+<span>🌰 Frutos secos</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Mariscos')" type="button">
+<span>🦐 Mariscos</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Huevo')" type="button">
+<span>🥚 Huevo</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+<button class="allergy-chip inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-surface-container-highest bg-surface-container-lowest text-on-surface text-sm font-medium active:scale-95 transition-all" onclick="toggleAllergy(this, 'Pescado')" type="button">
+<span>🐟 Pescado</span>
+<span class="action-icon ml-1 text-on-surface-variant">+</span>
+</button>
+</div>
+</div>
+<!-- PASO 6: Alimentos que prefieres evitar -->
+<div class="wizard-step hidden flex flex-col" id="step6">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Preferencias de Sabor</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">¿Hay algo que prefieres evitar?</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">No es una alergia. Simplemente evitaremos incluirlo en tus recetas semanales.</p>
+</div>
+<!-- Buscador ligero -->
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3.5 top-3 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-lowest border border-surface-container-high rounded-2xl pl-10 pr-10 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary" id="avoidSearchInput" onkeydown="handleAvoidKeypress(event)" placeholder="Escribe un ingrediente (ej. Cilantro)..." type="text"/>
+<button class="absolute right-2.5 top-2 text-primary font-bold text-xs bg-primary-fixed/40 px-2.5 py-1 rounded-xl" onclick="addCustomAvoid()">Agregar</button>
+</div>
+<!-- Lista de Excluidos Activos -->
+<div class="flex flex-wrap gap-2 mb-4 empty:hidden" id="activeAvoidList">
+<!-- Inyectados dinámicamente -->
+</div>
+<!-- Sugerencias populares -->
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Sugerencias habituales:</span>
+<div class="flex flex-wrap gap-2 mb-5">
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🥦 Brócoli')" type="button">🥦 Brócoli +</button>
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🧅 Cebolla')" type="button">🧅 Cebolla +</button>
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🐟 Atún')" type="button">🐟 Atún +</button>
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🍄 Champiñones')" type="button">🍄 Champiñones +</button>
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🥑 Aguacate')" type="button">🥑 Aguacate +</button>
+<button class="avoid-suggestion text-xs font-medium px-3 py-1.5 rounded-full bg-surface-container text-on-surface hover:bg-surface-container-high active:scale-95 transition-all" onclick="addAvoidTag('🍅 Tomate')" type="button">🍅 Tomate +</button>
+</div>
+<button class="text-xs font-semibold text-secondary hover:underline self-start" onclick="clearAvoidList()">
+          ✓ No quiero excluir nada, como de todo
+        </button>
+</div>
+<!-- PASO 7: Resumen antes de generar -->
+<div class="wizard-step hidden flex flex-col" id="step7">
+<div class="mb-5">
+<span class="text-[11px] font-bold tracking-widest text-primary uppercase">Confirmación</span>
+<h1 class="text-2xl sm:text-[26px] font-extrabold text-on-surface mt-1 leading-snug">Todo listo</h1>
+<p class="text-sm text-on-surface-variant mt-1.5 leading-relaxed">Revisa tus parámetros antes de crear tu plan inteligente.</p>
+</div>
+<!-- Tarjetas Resumen -->
+<div class="space-y-3 mb-4">
+<!-- Supermercado & Presupuesto -->
+<div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex items-center justify-between shadow-xs">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-xl">storefront</span>
+</div>
+<div>
+<span class="text-[11px] font-bold uppercase text-on-surface-variant">Establecimiento</span>
+<h4 class="font-bold text-sm text-on-surface" id="summaryMarket">Supermaxi</h4>
+</div>
+</div>
+<button class="text-xs font-bold text-primary hover:underline" onclick="goToStep(1)">Editar</button>
+</div>
+<!-- Presupuesto & Alcance -->
+<div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex items-center justify-between shadow-xs">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/50 text-secondary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-xl">payments</span>
+</div>
+<div>
+<span class="text-[11px] font-bold uppercase text-on-surface-variant">Presupuesto y Raciones</span>
+<h4 class="font-bold text-sm text-on-surface" id="summaryBudgetAndDays">$50 máx • 7 días • 2 personas</h4>
+</div>
+</div>
+<button class="text-xs font-bold text-primary hover:underline" onclick="goToStep(2)">Editar</button>
+</div>
+<!-- Objetivos seleccionados -->
+<div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex flex-col gap-2 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-bold uppercase text-on-surface-variant">Objetivos Seleccionados</span>
+<button class="text-xs font-bold text-primary hover:underline" onclick="goToStep(4)">Editar</button>
+</div>
+<div class="flex flex-wrap gap-1.5" id="summaryGoals">
+<!-- Rellenado dinámicamente -->
+</div>
+</div>
+<!-- Alergias y Exclusiones -->
+<div class="p-4 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex flex-col gap-2 shadow-xs">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-bold uppercase text-on-surface-variant">Restricciones &amp; Exclusiones</span>
+<button class="text-xs font-bold text-primary hover:underline" onclick="goToStep(5)">Editar</button>
+</div>
+<div class="text-xs text-on-surface-variant" id="summaryRestrictions">
+<!-- Rellenado dinámicamente -->
+</div>
+</div>
+</div>
+<div class="p-3 bg-primary-fixed/20 rounded-2xl border border-primary-fixed flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
+<p class="text-xs text-on-surface">La IA optimizará tus compras combinando ingredientes para no gastar de más.</p>
+</div>
+</div>
+</main>
+<!-- Botón Inferior Fijo de Acción Principal (Wizard) -->
+<footer class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-surface-container-high/80 p-4 pb-safe max-w-md mx-auto">
+<button class="w-full py-3.5 px-6 rounded-full bg-primary hover:bg-primary-container text-white font-bold text-base shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all" id="wizardNextBtn" onclick="wizardNextStep()" disabled>
+<span id="wizardNextBtnText">Continuar</span>
+<span class="material-symbols-outlined text-xl" id="wizardNextBtnIcon">arrow_forward</span>
+</button>
+</footer>
+</div>
+<!-- ========================================================================= -->
+<!-- 2. PANTALLA DE CARGA / GENERANDO TU MENÚ (OVERLAY ANIMADO) -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 z-50 bg-surface flex flex-col items-center justify-center p-6 text-center hidden" id="generationLoadingScreen">
+<div class="w-20 h-20 rounded-3xl bg-primary-fixed/50 flex items-center justify-center mb-6 text-primary relative">
+<span class="material-symbols-outlined text-4xl animate-spin" style="animation-duration: 3s;">sync</span>
+<span class="material-symbols-outlined text-2xl absolute text-primary">auto_fix_high</span>
+</div>
+<h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-1">Estamos preparando tu semana</h2>
+<p class="text-sm text-on-surface-variant max-w-xs mb-8">Buscando la mejor combinación para tu presupuesto y preferencias...</p>
+<!-- Lista de pasos de verificación -->
+<div class="w-full max-w-xs space-y-3 text-left">
+<div class="flex items-center gap-3 text-xs font-semibold text-secondary" id="genStep1">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>Revisando objetivos y restricciones</span>
+</div>
+<div class="flex items-center gap-3 text-xs font-semibold text-secondary" id="genStep2">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>Calculando raciones e ingredientes</span>
+</div>
+<div class="flex items-center gap-3 text-xs font-semibold text-on-surface-variant" id="genStep3">
+<span class="material-symbols-outlined text-base animate-pulse text-primary">radio_button_checked</span>
+<span>Ajustando canasta a tu presupuesto</span>
+</div>
+<div class="flex items-center gap-3 text-xs font-medium text-on-surface-variant/50" id="genStep4">
+<span class="material-symbols-outlined text-base">radio_button_unchecked</span>
+<span>Optimizando preparaciones de 25 min</span>
+</div>
+</div>
+<div class="mt-8 hidden animate-fadeIn w-full max-w-xs" id="finishGenerationBox">
+<button class="w-full py-3.5 px-6 rounded-full bg-secondary text-white font-bold text-base shadow-lg shadow-secondary/20 flex items-center justify-center gap-2 active:scale-95 transition-all" onclick="revealDashboard()">
+<span>¡Ver mi menú listo! 🎉</span>
+</button>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 3. DASHBOARD DESBLOQUEADO (POST ONBOARDING) -->
+<!-- ========================================================================= -->
+<div class="hidden flex-1 flex-col w-full" id="dashboardContainer">
+<!-- Header General -->
+<header class="fixed top-0 w-full z-40 pt-safe bg-surface/85 backdrop-blur-xl border-b border-surface-container-high/40">
+<div class="h-16 px-4 flex items-center justify-between max-w-md mx-auto">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-extrabold text-sm shadow-xs">
+            NP
+          </div>
+<div class="flex flex-col">
+<span class="text-base font-extrabold text-on-surface leading-tight">NutriPlan</span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Tu Plan Activo</span>
+</div>
+</div>
+<!-- Chip Supermercado Activo en Header -->
+<button class="h-9 px-3 bg-surface-container hover:bg-surface-container-high rounded-full flex items-center gap-1.5 transition-colors active:scale-95 text-xs font-semibold" onclick="openPreferencesModal()">
+<span class="material-symbols-outlined text-primary text-[18px]">storefront</span>
+<span class="truncate max-w-[85px]" id="dashHeaderMarket">Supermaxi</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[14px]">tune</span>
+</button>
+<!-- Tema -->
+<button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary active:scale-95 transition-transform" onclick="toggleTheme()" title="Cambiar tema" aria-label="Cambiar tema">
+<span class="material-symbols-outlined text-[20px]" id="themeIcon">dark_mode</span>
+</button>
+<!-- Volver al asistente -->
+<button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary active:scale-95 transition-transform" onclick="restartOnboarding()" title="Editar configuración inicial">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+</button>
+</div>
+</header>
+<!-- Main Content Dashboard -->
+<main class="app-view flex-1 flex flex-col relative w-full pt-20 pb-28 max-w-md mx-auto px-4 gap-4" data-view="home" id="homeView">
+<!-- Saludo Personalizado & Estado Dinámico -->
+<section class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+            Semana 1 generada
+          </span>
+<span class="text-xs text-on-surface-variant font-medium">Plan de <span id="dashDaysBadge">7</span> días</span>
+</div>
+<h1 class="text-2xl font-extrabold text-on-surface tracking-tight mt-1">¡Tu plan está listo! 👋</h1>
+<p class="text-sm text-on-surface-variant">Tu nuevo plan semanal ya está ajustado a tus gustos y presupuesto.</p>
+</section>
+<!-- Chip Supermercado Sincronizado -->
+<section class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low border border-surface-container-high/60 shadow-xs">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[22px]">storefront</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-bold text-on-surface truncate" id="dashMarketCardName">Supermaxi</span>
+<span class="w-2 h-2 rounded-full bg-secondary flex-shrink-0"></span>
+</div>
+<span class="text-xs text-on-surface-variant truncate">Precios estimados para tu planificación</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-primary text-xs font-bold shadow-xs hover:bg-surface-container active:scale-95 transition-all" onclick="openPreferencesModal()">
+          Preferencias
+        </button>
+</section>
+<!-- Tarjeta Hero: Presupuesto Dinámico Según el Usuario -->
+<section class="rounded-3xl bg-surface-container-lowest p-5 shadow-sm border border-surface-container-high/60 flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">Presupuesto Semanal</span>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-3xl font-extrabold text-on-surface tracking-tight" id="dashSpentVal">$46.80</span>
+<span class="text-sm font-bold text-on-surface-variant" id="dashMaxVal">/ $50.00</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary-fixed/60 text-secondary text-xs font-bold" id="dashBudgetStatus">
+<span class="material-symbols-outlined text-[14px]">savings</span> ¡Dentro de meta! 🎉
+          </span>
+</div>
+<!-- Indicador de barra -->
+<div class="flex flex-col gap-1.5 pt-1">
+<div class="w-full h-2.5 rounded-full bg-surface-container-high overflow-hidden flex">
+<div class="h-full bg-secondary rounded-full transition-all duration-700 ease-out" id="dashProgressFill" style="width: 88%;"></div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant">
+<span id="dashPercentVal">93.6% utilizado</span>
+<span class="text-secondary font-bold" id="dashFreeVal">+$3.20 proyectado libre</span>
+</div>
+</div>
+<!-- Mini métricas -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div class="p-3 rounded-2xl bg-surface-container-low flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-surface-container-lowest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant font-medium">Disponible</span>
+<span class="text-xs font-bold text-secondary" id="dashFreeVal2">+$3.20</span>
+</div>
+</div>
+<div class="p-3 rounded-2xl bg-surface-container-low flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">shopping_bag</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant font-medium">Estimado</span>
+<span class="text-xs font-bold text-on-surface" id="dashSpentVal2">$46.80</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Chips Activos de Objetivos (Nivel Dashboard) -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tus Filtros Activos</span>
+<button class="text-xs font-bold text-primary hover:underline" onclick="openPreferencesModal()">Editar</button>
+</div>
+<div class="flex flex-wrap gap-1.5" id="dashActiveGoalsContainer">
+<!-- Inyectado dinámicamente -->
+</div>
+</section>
+<!-- Plan Semanal: Selector de Días Horizontal -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<h2 class="text-base font-bold text-on-surface">Tu Calendario de Comidas</h2>
+<button class="text-xs font-bold text-primary cursor-pointer" onclick="navigateTo('week')">Ver semana completa →</button>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4" id="calendarDaysList">
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-primary-container text-white shadow-sm flex-shrink-0">
+<span class="text-[10px] font-extrabold uppercase">Hoy</span>
+<span class="text-sm font-extrabold mt-0.5">D1</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D2</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D3</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D4</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D5</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D6</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+<button class="flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0">
+<span class="text-[10px] font-semibold">Día</span>
+<span class="text-sm font-bold mt-0.5">D7</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+</button>
+</div>
+</section>
+<!-- Tarjeta Plato Sugerido -->
+<section class="rounded-3xl bg-surface-container-lowest p-4 shadow-sm border border-surface-container-high/60 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-container text-xs font-bold">
+              Almuerzo Recomendado
+            </span>
+<span class="text-xs text-on-surface-variant flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[14px]">schedule</span> 25 min
+            </span>
+</div>
+<span class="text-xs font-bold text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded-full" id="homeMealCost">
+            $2.45 / porción
+          </span>
+</div>
+<div class="flex gap-3 items-center">
+<img alt="Bowl de Pollo y Quinoa" class="w-20 h-20 rounded-2xl object-cover flex-shrink-0 shadow-xs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUHf72WZlXU6oKi27PGAaHv3vLT-6K64HRK8fAmvTFHVf6IuWVWoHlAx9MVzv2VR-P5KKDcXXdtfyK1hCh-LdVv7gi0ukCD6Ks4gkBAks-JyP-UyCvzWNJJH97D4bSaTwJ-q-q9rrzooJR4s08Wdu5LX17gTl1jpvVE47BjjiRQ11pZEOyDnq6er7oR7p_jrRTXt2g7WgIIpaflChMZw5EMJ4OKr_K7lIMFe-BxGo"/>
+<div class="flex flex-col min-w-0">
+<h3 class="text-sm font-bold text-on-surface leading-snug line-clamp-2" id="homeMealName">
+              Bowl Proteico de Pollo al Limón con Quinoa &amp; Aguacate
+            </h3>
+<p class="text-xs text-on-surface-variant line-clamp-1 mt-1" id="homeMealDescription">
+              Adaptado a tus objetivos de proteína y salud.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<button class="flex-1 py-2.5 px-4 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-all active:scale-95 flex items-center justify-center gap-1.5" onclick="openRecipeByIndex(0)">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+            Ver Receta
+          </button>
+<button class="w-10 h-10 rounded-full bg-secondary-fixed/50 hover:bg-secondary-fixed text-secondary flex items-center justify-center transition-all active:scale-95 flex-shrink-0" title="Marcar cocinado" onclick="toggleCooked(0, this)">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+</div>
+</section>
+<!-- Herramientas Rápidas -->
+<section class="space-y-2">
+<button class="w-full p-3.5 rounded-2xl bg-gradient-to-r from-primary-fixed/40 to-surface-container-low flex items-center justify-between text-left active:scale-[0.99] border border-primary-fixed/50" onclick="openPreferencesModal()">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-xl">tune</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Ajustar Filtros &amp; Preferencias</h4>
+<p class="text-xs text-on-surface-variant">Modifica alergias, tienda o metas al vuelo</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-base">chevron_right</span>
+</button>
+<button class="w-full p-3.5 rounded-2xl bg-surface-container-lowest flex items-center justify-between text-left active:scale-[0.99] border border-surface-container-high" onclick="restartOnboarding()">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container text-on-surface-variant flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-xl">restart_alt</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Volver al Asistente de Inicio</h4>
+<p class="text-xs text-on-surface-variant">Prueba con otro presupuesto o supermercado</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-base">chevron_right</span>
+</button>
+</section>
+</main>
+<!-- VISTA SEMANA -->
+<main class="app-view hidden flex-1 flex-col relative w-full pt-20 pb-28 max-w-md mx-auto px-4 gap-4" data-view="week" id="weekView">
+  <section class="flex items-center justify-between">
+    <div><span class="text-[11px] font-bold uppercase tracking-wider text-primary">Plan semanal</span><h1 class="text-2xl font-extrabold text-on-surface">Tus comidas</h1></div>
+    <button class="px-3 py-2 rounded-full bg-surface-container text-xs font-bold" onclick="openPreferencesModal()"><span class="material-symbols-outlined text-[16px] align-middle">tune</span> Filtros</button>
+  </section>
+  <div class="flex gap-2 overflow-x-auto pb-1" id="weekDayTabs"></div>
+  <div class="space-y-3" id="weekMealsList"></div>
+</main>
+<!-- VISTA COMPRAS -->
+<main class="app-view hidden flex-1 flex-col relative w-full pt-20 pb-28 max-w-md mx-auto px-4 gap-4" data-view="shopping" id="shoppingView">
+  <section class="flex items-end justify-between">
+    <div><span class="text-[11px] font-bold uppercase tracking-wider text-primary">Lista inteligente</span><h1 class="text-2xl font-extrabold text-on-surface">Compras</h1></div>
+    <div class="text-right"><span class="text-[10px] uppercase font-bold text-on-surface-variant">Estimado</span><div class="text-xl font-extrabold text-secondary" id="shoppingTotal">$0.00</div></div>
+  </section>
+  <section class="rounded-2xl bg-surface-container-lowest border border-surface-container-high p-4">
+    <div class="flex justify-between text-xs mb-2"><span id="shoppingProgressText">0 de 0 comprados</span><span class="font-bold text-secondary" id="shoppingProgressPct">0%</span></div>
+    <div class="h-2 rounded-full bg-surface-container-high overflow-hidden"><div id="shoppingProgressBar" class="h-full bg-secondary rounded-full transition-all" style="width:0%"></div></div>
+  </section>
+  <div class="space-y-5" id="shoppingList"></div>
+</main>
+<!-- VISTA RECETAS -->
+<main class="app-view hidden flex-1 flex-col relative w-full pt-20 pb-28 max-w-md mx-auto px-4 gap-4" data-view="recipes" id="recipesView">
+  <section><span class="text-[11px] font-bold uppercase tracking-wider text-primary">Recetario express</span><h1 class="text-2xl font-extrabold text-on-surface">Recetas de tu semana</h1><p class="text-sm text-on-surface-variant mt-1">Pasos breves y cantidades adaptadas a tus porciones.</p></section>
+  <div class="space-y-3" id="recipesList"></div>
+</main>
+<!-- Barra de Navegación Inferior (Visible SOLAMENTE en Dashboard) -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe pointer-events-none" id="dashboardBottomNav">
+<div class="pointer-events-auto max-w-md mx-auto px-4 mb-2">
+<div class="bg-surface-container-lowest/95 backdrop-blur-2xl rounded-full shadow-[0_12px_32px_rgba(100,75,45,0.12)] border border-surface-container-high/60 px-3 py-1 flex items-center justify-between">
+<button class="app-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-primary font-bold active:scale-95 transition-all" data-nav="home" onclick="navigateTo('home')">
+<span class="material-symbols-outlined text-[22px]">cottage</span>
+<span class="text-[10px] mt-0.5">Inicio</span>
+</button>
+<button class="app-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all" data-nav="week" onclick="navigateTo('week')">
+<span class="material-symbols-outlined text-[22px]">calendar_month</span>
+<span class="text-[10px] mt-0.5">Semana</span>
+</button>
+<button class="app-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all" data-nav="shopping" onclick="navigateTo('shopping')">
+<span class="material-symbols-outlined text-[22px]">shopping_basket</span>
+<span class="text-[10px] mt-0.5">Compras</span>
+</button>
+<button class="app-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all" data-nav="recipes" onclick="navigateTo('recipes')">
+<span class="material-symbols-outlined text-[22px]">skillet</span>
+<span class="text-[10px] mt-0.5">Recetas</span>
+</button>
+<button class="flex-1 flex flex-col items-center justify-center py-1 text-on-surface-variant hover:text-on-surface active:scale-95 transition-all" onclick="openPreferencesModal()">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+<span class="text-[10px] mt-0.5">Filtros</span>
+</button>
+</div>
+</div>
+</nav>
+</div>
+<!-- ========================================================================= -->
+<!-- 4. MODAL / BOTTOM SHEET: AJUSTE RÁPIDO DE PREFERENCIAS Y FILTROS -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex flex-col justify-end hidden transition-opacity" id="preferencesModal">
+<div class="flex-1" onclick="closePreferencesModal()"></div>
+<div class="bg-surface rounded-t-3xl max-w-md w-full mx-auto max-h-[85vh] flex flex-col border-t border-surface-container-high shadow-2xl overflow-hidden animate-slideUp">
+<!-- Header modal -->
+<div class="p-4 border-b border-surface-container-high flex items-center justify-between">
+<div>
+<h3 class="font-extrabold text-base text-on-surface">Filtros y Preferencias</h3>
+<p class="text-xs text-on-surface-variant">Ajusta tus criterios sin reiniciar tu cuenta</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="closePreferencesModal()">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Contenido scrollable del modal -->
+<div class="p-5 overflow-y-auto space-y-5">
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Supermercado</span>
+<div class="flex gap-2 overflow-x-auto pb-1">
+<button class="modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary-fixed/40 text-on-primary-container" onclick="updateModalMarket('Supermaxi')">Supermaxi</button>
+<button class="modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-surface-container bg-surface-container-lowest text-on-surface" onclick="updateModalMarket('Coral Hipermercados')">Coral</button>
+<button class="modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-surface-container bg-surface-container-lowest text-on-surface" onclick="updateModalMarket('Gran Akí')">Gran Akí</button>
+<button class="modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-surface-container bg-surface-container-lowest text-on-surface" onclick="updateModalMarket('Almacenes Tía')">Tía</button>
+</div>
+</div>
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Objetivos Activos</span>
+<div class="flex flex-wrap gap-2" id="modalGoalsContainer">
+<!-- Chips idénticos con toggle -->
+</div>
+</div>
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Presupuesto ($USD)</span>
+<div class="flex items-center gap-3">
+<input class="w-24 px-3 py-1.5 rounded-xl border border-surface-container-high text-sm font-bold text-center" id="modalBudgetInput" type="number" value="50"/>
+<span class="text-xs text-on-surface-variant">Límite semanal de tu planificación</span>
+</div>
+</div>
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Días y personas</span>
+<div class="grid grid-cols-2 gap-2">
+<select class="rounded-xl border border-surface-container-high bg-surface-container-lowest text-sm font-bold" id="modalDaysSelect"><option value="3">3 días</option><option value="5">5 días</option><option value="7">7 días</option></select>
+<div class="flex items-center justify-between rounded-xl border border-surface-container-high bg-surface-container-lowest px-2">
+<button class="w-8 h-8 rounded-full" onclick="changeModalPeople(-1)" type="button">−</button><span class="font-bold text-sm" id="modalPeopleCount">2</span><button class="w-8 h-8 rounded-full" onclick="changeModalPeople(1)" type="button">+</button>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-2"><span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Alergias</span><button class="text-xs font-bold text-secondary" id="modalNoAllergiesBtn" onclick="toggleModalNoAllergies()" type="button">Sin alergias ✓</button></div>
+<div class="flex flex-wrap gap-2" id="modalAllergiesContainer"></div>
+</div>
+<div>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Ingredientes a evitar</span>
+<div class="flex gap-2"><input class="flex-1 rounded-xl border border-surface-container-high bg-surface-container-lowest text-sm" id="modalAvoidInput" placeholder="Ej. cilantro" type="text"/><button class="px-3 rounded-xl bg-surface-container text-xs font-bold" onclick="addModalAvoid()" type="button">Agregar</button></div>
+<div class="flex flex-wrap gap-1.5 mt-2" id="modalAvoidContainer"></div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low">
+<div><span class="text-xs font-bold text-on-surface">Apariencia</span><p class="text-[11px] text-on-surface-variant">Alterna entre tema claro y oscuro.</p></div><button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-xs font-bold" onclick="toggleTheme()" type="button">Cambiar tema</button>
+</div>
+</div>
+<!-- Footer modal -->
+<div class="p-4 border-t border-surface-container-high bg-surface-container-lowest pb-safe">
+<button class="w-full py-3 rounded-full bg-primary text-white font-bold text-sm shadow-md active:scale-95 transition-transform" onclick="applyModalChanges()">
+          Guardar y Recalcular Menú
+        </button>
+</div>
+</div>
+</div>
+<!-- MODAL RECETA -->
+<div class="fixed inset-0 z-[60] bg-black/45 hidden items-end justify-center" id="recipeModal">
+  <div class="absolute inset-0" onclick="closeRecipeModal()"></div>
+  <article class="relative bg-surface rounded-t-3xl w-full max-w-md max-h-[88vh] overflow-y-auto p-5 pb-safe shadow-2xl" id="recipeModalContent"></article>
+</div>
+<!-- MODAL PRESUPUESTO INSUFICIENTE -->
+<div class="fixed inset-0 z-[70] bg-black/45 hidden items-end justify-center" id="budgetIssueModal">
+  <div class="absolute inset-0"></div>
+  <section class="relative bg-surface rounded-t-3xl w-full max-w-md p-5 pb-safe shadow-2xl">
+    <div class="w-12 h-1.5 rounded-full bg-surface-container-highest mx-auto mb-4"></div>
+    <span class="text-[11px] font-extrabold uppercase tracking-wider text-primary">Ajuste necesario</span>
+    <h3 class="text-xl font-extrabold mt-1">Nos faltan <span id="budgetMissingAmount">$0.00</span></h3>
+    <p class="text-sm text-on-surface-variant mt-1 mb-4">Con tus preferencias actuales el plan supera el presupuesto. Puedes optimizar ingredientes o reducir los días.</p>
+    <div class="space-y-2">
+      <button class="w-full p-3.5 rounded-2xl bg-primary text-white font-bold text-sm" onclick="optimizePlanForBudget()">💰 Optimizar automáticamente</button>
+      <button class="w-full p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-container-high text-on-surface font-bold text-sm" onclick="reduceDaysToFit()">📅 Planificar menos días</button>
+      <button class="w-full p-3.5 rounded-2xl bg-surface-container text-on-surface font-bold text-sm" onclick="closeBudgetIssueAndEdit()">✏ Ajustar presupuesto</button>
+    </div>
+  </section>
+</div>
+<!-- TOAST -->
+<div class="fixed left-1/2 -translate-x-1/2 bottom-24 z-[80] hidden px-4 py-2.5 rounded-full bg-on-surface text-surface text-xs font-bold shadow-xl" id="toast"></div>
+<!-- ========================================================================= -->
+<!-- JAVASCRIPT STATE ENGINE (ONBOARDING + REACTIVIDAD) -->
+<!-- ========================================================================= -->
+<script>
+(() => {
+  const STORAGE_STATE = 'nutriplan.userState.v2';
+  const STORAGE_PLAN = 'nutriplan.currentPlan.v2';
+  const STORAGE_COMPLETE = 'nutriplan.onboardingComplete.v2';
+  const STORAGE_THEME = 'nutriplan.theme.v2';
+
+  const defaultState = {
+    step: 1,
+    totalSteps: 7,
+    market: null,
+    budget: 50,
+    days: 7,
+    people: 2,
+    goals: [],
+    hasNoAllergies: true,
+    allergies: [],
+    avoidedItems: []
+  };
+
+  let userState = { ...defaultState };
+  let currentPlan = { meals: [], shopping: [], total: 0, cooked: [] };
+  let pendingPlan = null;
+  let modalDraft = null;
+  let currentView = 'home';
+
+  const marketFactors = {
+    'Supermaxi': 1.08,
+    'Coral Hipermercados': 0.96,
+    'Gran Akí': 0.91,
+    'Almacenes Tía': 0.94,
+    'Mercado Local / Otro': 1.00
+  };
+
+  const mealCatalog = [
+    {
+      id: 'pollo_quinoa', emoji: '🍋', name: 'Pollo al limón con quinoa y aguacate', time: 25,
+      tags: ['Alto en proteína','Saludable','Equilibrado','Rápido'], allergens: [],
+      ingredients: [
+        {name:'Pechuga de pollo', qty:180, unit:'g', cost:1.55, category:'Carnes y proteínas'},
+        {name:'Quinoa', qty:80, unit:'g', cost:0.48, category:'Granos y despensa'},
+        {name:'Aguacate', qty:0.5, unit:'unid', cost:0.55, category:'Frutas y verduras'},
+        {name:'Tomate', qty:100, unit:'g', cost:0.22, category:'Frutas y verduras'},
+        {name:'Limón', qty:0.5, unit:'unid', cost:0.12, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina la quinoa hasta que quede suave.','Dora el pollo con limón y especias.','Corta el tomate y el aguacate.','Sirve todo en un bowl y mezcla al gusto.']
+    },
+    {
+      id: 'lentejas_arroz', emoji: '🥣', name: 'Lentejas con arroz y vegetales', time: 30,
+      tags: ['Económico','Saludable','Más verduras','Batch cooking','Antiinflamatorio'], allergens: [],
+      ingredients: [
+        {name:'Lentejas', qty:90, unit:'g', cost:0.28, category:'Granos y despensa'},
+        {name:'Arroz', qty:80, unit:'g', cost:0.22, category:'Granos y despensa'},
+        {name:'Zanahoria', qty:80, unit:'g', cost:0.12, category:'Frutas y verduras'},
+        {name:'Pimiento', qty:60, unit:'g', cost:0.18, category:'Frutas y verduras'},
+        {name:'Cebolla', qty:50, unit:'g', cost:0.10, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina las lentejas hasta que estén tiernas.','Prepara el arroz aparte.','Saltea las verduras picadas.','Mezcla las lentejas con las verduras y acompaña con arroz.']
+    },
+    {
+      id: 'pasta_carne', emoji: '🍝', name: 'Pasta integral con carne y tomate', time: 25,
+      tags: ['Alto en proteína','Equilibrado','Reconfortante','Favoritos de familia','Rápido'], allergens: ['Gluten'],
+      ingredients: [
+        {name:'Pasta integral', qty:100, unit:'g', cost:0.36, category:'Granos y despensa'},
+        {name:'Carne molida magra', qty:140, unit:'g', cost:1.25, category:'Carnes y proteínas'},
+        {name:'Tomate', qty:140, unit:'g', cost:0.30, category:'Frutas y verduras'},
+        {name:'Cebolla', qty:40, unit:'g', cost:0.08, category:'Frutas y verduras'}
+      ],
+      steps:['Hierve la pasta según el empaque.','Dora la carne molida.','Añade tomate y cebolla picados.','Mezcla la salsa con la pasta y sirve.']
+    },
+    {
+      id: 'tortilla_vegetales', emoji: '🍳', name: 'Tortilla de vegetales con arroz', time: 20,
+      tags: ['Económico','Más verduras','Rápido','Favoritos de familia'], allergens: ['Huevo'],
+      ingredients: [
+        {name:'Huevo', qty:2, unit:'unid', cost:0.55, category:'Lácteos y huevos'},
+        {name:'Arroz', qty:70, unit:'g', cost:0.20, category:'Granos y despensa'},
+        {name:'Espinaca', qty:60, unit:'g', cost:0.28, category:'Frutas y verduras'},
+        {name:'Tomate', qty:80, unit:'g', cost:0.18, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina el arroz.','Bate los huevos.','Añade espinaca y tomate picados.','Cocina la tortilla a fuego medio y sirve con arroz.']
+    },
+    {
+      id: 'pescado_papas', emoji: '🐟', name: 'Pescado al horno con papas y ensalada', time: 35,
+      tags: ['Alto en proteína','Saludable','Bajo en carbos'], allergens: ['Pescado'],
+      ingredients: [
+        {name:'Filete de pescado', qty:180, unit:'g', cost:1.75, category:'Carnes y proteínas'},
+        {name:'Papa', qty:220, unit:'g', cost:0.38, category:'Frutas y verduras'},
+        {name:'Lechuga', qty:70, unit:'g', cost:0.20, category:'Frutas y verduras'},
+        {name:'Tomate', qty:80, unit:'g', cost:0.18, category:'Frutas y verduras'}
+      ],
+      steps:['Corta las papas y hornéalas.','Sazona el pescado y colócalo en el horno.','Prepara una ensalada sencilla.','Sirve el pescado con papas y ensalada.']
+    },
+    {
+      id: 'cerdo_arroz', emoji: '🥢', name: 'Cerdo salteado con arroz y brócoli', time: 25,
+      tags: ['Alto en proteína','Equilibrado','Rápido'], allergens: [],
+      ingredients: [
+        {name:'Lomo de cerdo', qty:160, unit:'g', cost:1.20, category:'Carnes y proteínas'},
+        {name:'Arroz', qty:80, unit:'g', cost:0.22, category:'Granos y despensa'},
+        {name:'Brócoli', qty:120, unit:'g', cost:0.32, category:'Frutas y verduras'},
+        {name:'Zanahoria', qty:60, unit:'g', cost:0.10, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina el arroz.','Corta y saltea el cerdo.','Añade brócoli y zanahoria.','Sirve el salteado sobre el arroz.']
+    },
+    {
+      id: 'garbanzos_aguacate', emoji: '🥗', name: 'Ensalada de garbanzos y aguacate', time: 15,
+      tags: ['Saludable','Más verduras','Rápido','Bajo en carbos','Económico'], allergens: [],
+      ingredients: [
+        {name:'Garbanzos', qty:130, unit:'g', cost:0.42, category:'Granos y despensa'},
+        {name:'Aguacate', qty:0.5, unit:'unid', cost:0.55, category:'Frutas y verduras'},
+        {name:'Tomate', qty:100, unit:'g', cost:0.22, category:'Frutas y verduras'},
+        {name:'Pepino', qty:100, unit:'g', cost:0.20, category:'Frutas y verduras'}
+      ],
+      steps:['Enjuaga los garbanzos.','Corta aguacate, tomate y pepino.','Mezcla todos los ingredientes.','Sazona con limón, sal y pimienta.']
+    },
+    {
+      id: 'arroz_pollo', emoji: '🍚', name: 'Arroz con pollo y verduras', time: 30,
+      tags: ['Económico','Alto en proteína','Favoritos de familia','Batch cooking','Equilibrado'], allergens: [],
+      ingredients: [
+        {name:'Pechuga de pollo', qty:150, unit:'g', cost:1.28, category:'Carnes y proteínas'},
+        {name:'Arroz', qty:90, unit:'g', cost:0.25, category:'Granos y despensa'},
+        {name:'Arvejas', qty:60, unit:'g', cost:0.15, category:'Frutas y verduras'},
+        {name:'Zanahoria', qty:70, unit:'g', cost:0.11, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina el pollo en cubos.','Añade zanahoria y arvejas.','Incorpora el arroz y el agua necesaria.','Cocina a fuego bajo hasta que el arroz esté listo.']
+    },
+    {
+      id: 'pasta_garbanzos', emoji: '🌿', name: 'Pasta con garbanzos y espinaca', time: 20,
+      tags: ['Económico','Saludable','Rápido','Antiinflamatorio'], allergens: ['Gluten'],
+      ingredients: [
+        {name:'Pasta', qty:95, unit:'g', cost:0.30, category:'Granos y despensa'},
+        {name:'Garbanzos', qty:100, unit:'g', cost:0.32, category:'Granos y despensa'},
+        {name:'Espinaca', qty:80, unit:'g', cost:0.34, category:'Frutas y verduras'},
+        {name:'Tomate', qty:80, unit:'g', cost:0.18, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina la pasta.','Saltea la espinaca y el tomate.','Añade los garbanzos.','Mezcla con la pasta y sirve.']
+    },
+    {
+      id: 'bowl_carne_frijol', emoji: '🌮', name: 'Bowl de carne, frijoles y arroz', time: 25,
+      tags: ['Alto en proteína','Reconfortante','Favoritos de familia','Batch cooking'], allergens: [],
+      ingredients: [
+        {name:'Carne molida magra', qty:130, unit:'g', cost:1.16, category:'Carnes y proteínas'},
+        {name:'Frijoles', qty:100, unit:'g', cost:0.30, category:'Granos y despensa'},
+        {name:'Arroz', qty:75, unit:'g', cost:0.21, category:'Granos y despensa'},
+        {name:'Tomate', qty:80, unit:'g', cost:0.18, category:'Frutas y verduras'}
+      ],
+      steps:['Cocina el arroz.','Dora la carne con especias suaves.','Calienta los frijoles.','Sirve todo en un bowl con tomate fresco.']
+    },
+    {
+      id: 'crema_verduras', emoji: '🥕', name: 'Crema de verduras con tostadas de maíz', time: 25,
+      tags: ['Económico','Más verduras','Saludable','Antiinflamatorio','Reconfortante'], allergens: [],
+      ingredients: [
+        {name:'Zapallo', qty:180, unit:'g', cost:0.28, category:'Frutas y verduras'},
+        {name:'Zanahoria', qty:100, unit:'g', cost:0.16, category:'Frutas y verduras'},
+        {name:'Papa', qty:120, unit:'g', cost:0.20, category:'Frutas y verduras'},
+        {name:'Tostadas de maíz', qty:2, unit:'unid', cost:0.26, category:'Granos y despensa'}
+      ],
+      steps:['Cocina zapallo, zanahoria y papa.','Licúa con parte del agua de cocción.','Ajusta sal y especias.','Sirve caliente con tostadas de maíz.']
+    },
+    {
+      id: 'pollo_ensalada', emoji: '🥬', name: 'Pollo a la plancha con ensalada fresca', time: 20,
+      tags: ['Alto en proteína','Saludable','Bajo en carbos','Rápido'], allergens: [],
+      ingredients: [
+        {name:'Pechuga de pollo', qty:180, unit:'g', cost:1.55, category:'Carnes y proteínas'},
+        {name:'Lechuga', qty:90, unit:'g', cost:0.26, category:'Frutas y verduras'},
+        {name:'Pepino', qty:100, unit:'g', cost:0.20, category:'Frutas y verduras'},
+        {name:'Tomate', qty:100, unit:'g', cost:0.22, category:'Frutas y verduras'}
+      ],
+      steps:['Sazona y cocina el pollo a la plancha.','Lava y corta las verduras.','Mezcla la ensalada con limón.','Sirve el pollo junto a la ensalada.']
+    }
+  ];
+
+  const money = n => `$${Number(n || 0).toFixed(2)}`;
+  const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9\s]/g,' ').replace(/\s+/g,' ').trim().toLowerCase();
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  function init() {
+    restoreTheme();
+    restoreState();
+    syncAllInputs();
+    if (localStorage.getItem(STORAGE_COMPLETE) === 'true' && currentPlan.meals.length) {
+      document.getElementById('onboardingContainer').classList.add('hidden');
+      const dash = document.getElementById('dashboardContainer');
+      dash.classList.remove('hidden');
+      dash.classList.add('flex');
+      renderApplication();
+      navigateTo('home');
+    } else {
+      renderStep();
+    }
+  }
+
+  function restoreState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_STATE) || 'null');
+      if (saved) userState = { ...defaultState, ...saved, step: 1, totalSteps: 7 };
+      const savedPlan = JSON.parse(localStorage.getItem(STORAGE_PLAN) || 'null');
+      if (savedPlan && Array.isArray(savedPlan.meals)) currentPlan = savedPlan;
+    } catch (_) {
+      userState = { ...defaultState };
+      currentPlan = { meals: [], shopping: [], total: 0, cooked: [] };
+    }
+  }
+
+  function persistState(markComplete = false) {
+    const cleanState = { ...userState, step: 1, totalSteps: 7 };
+    localStorage.setItem(STORAGE_STATE, JSON.stringify(cleanState));
+    localStorage.setItem(STORAGE_PLAN, JSON.stringify(currentPlan));
+    if (markComplete) localStorage.setItem(STORAGE_COMPLETE, 'true');
+  }
+
+  function restoreTheme() {
+    const saved = localStorage.getItem(STORAGE_THEME);
+    const dark = saved ? saved === 'dark' : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', dark);
+    updateThemeIcon();
+  }
+
+  window.toggleTheme = function toggleTheme() {
+    const dark = !document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem(STORAGE_THEME, dark ? 'dark' : 'light');
+    updateThemeIcon();
+  };
+
+  function updateThemeIcon() {
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.textContent = document.documentElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+  }
+
+  function syncAllInputs() {
+    document.querySelectorAll('.market-card').forEach(card => setMarketCardStyle(card, card.dataset.market === userState.market));
+    const budgetInput = document.getElementById('budgetNumberInput');
+    const budgetRange = document.getElementById('budgetRange');
+    const preview = document.getElementById('budgetTextPreview');
+    if (budgetInput) budgetInput.value = userState.budget;
+    if (budgetRange) budgetRange.value = Math.min(180, userState.budget);
+    if (preview) preview.textContent = userState.budget;
+    updateBudgetPills();
+    document.querySelectorAll('.days-card').forEach(card => setDaysCardStyle(card, Number(card.dataset.days) === Number(userState.days)));
+    const people = document.getElementById('peopleCount');
+    if (people) people.textContent = userState.people;
+    document.querySelectorAll('#step4 .goal-chip').forEach(btn => {
+      const label = btn.querySelector('span:nth-child(2)')?.textContent.trim();
+      applyChipSelectedStyle(btn, userState.goals.includes(label));
+    });
+    syncAllergyUI();
+    renderAvoidTags();
+    updateNextButtonState();
+  }
+
+  window.renderStep = function renderStep() {
+    for (let i = 1; i <= userState.totalSteps; i++) document.getElementById(`step${i}`)?.classList.add('hidden');
+    document.getElementById(`step${userState.step}`)?.classList.remove('hidden');
+    document.getElementById('wizardStepLabel').textContent = `Paso ${userState.step} de ${userState.totalSteps}`;
+    document.getElementById('wizardProgressBar').style.width = `${(userState.step / userState.totalSteps) * 100}%`;
+
+    const backBtn = document.getElementById('wizardBackBtn');
+    backBtn.classList.toggle('opacity-0', userState.step === 1);
+    backBtn.classList.toggle('pointer-events-none', userState.step === 1);
+
+    const skip = document.getElementById('wizardSkipBtn');
+    const skippable = [4,5,6].includes(userState.step);
+    skip.classList.toggle('hidden', !skippable);
+    skip.textContent = userState.step === 5 ? 'Sin alergias' : 'Omitir';
+
+    const nextText = document.getElementById('wizardNextBtnText');
+    const nextIcon = document.getElementById('wizardNextBtnIcon');
+    if (userState.step === userState.totalSteps) {
+      nextText.textContent = '✨ Crear mi menú';
+      nextIcon.textContent = 'auto_awesome';
+      updateSummaryView();
+    } else {
+      nextText.textContent = 'Continuar';
+      nextIcon.textContent = 'arrow_forward';
+    }
+    syncAllInputs();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.wizardNextStep = function wizardNextStep() {
+    if (!isStepValid()) return;
+    if (userState.step < userState.totalSteps) {
+      userState.step++;
+      renderStep();
+    } else startMenuGeneration();
+  };
+
+  window.wizardPrevStep = function wizardPrevStep() {
+    if (userState.step > 1) {
+      userState.step--;
+      renderStep();
+    }
+  };
+
+  window.goToStep = function goToStep(step) {
+    userState.step = Math.max(1, Math.min(userState.totalSteps, Number(step)));
+    renderStep();
+  };
+
+  window.skipOptionalStep = function skipOptionalStep() {
+    if (userState.step === 5) {
+      userState.hasNoAllergies = true;
+      userState.allergies = [];
+    }
+    if (userState.step < userState.totalSteps) {
+      userState.step++;
+      renderStep();
+    }
+  };
+
+  function isStepValid() {
+    if (userState.step === 1) return Boolean(userState.market);
+    if (userState.step === 2) return Number(userState.budget) >= 20;
+    if (userState.step === 3) return Number(userState.days) >= 1 && Number(userState.people) >= 1;
+    return true;
+  }
+
+  function updateNextButtonState() {
+    const btn = document.getElementById('wizardNextBtn');
+    if (btn) btn.disabled = !isStepValid();
+  }
+
+  function setMarketCardStyle(card, selected) {
+    const check = card.querySelector('.check-box');
+    card.classList.toggle('border-primary', selected);
+    card.classList.toggle('bg-primary-fixed/15', selected);
+    card.classList.toggle('border-surface-container-high', !selected);
+    if (selected) {
+      check.className = 'check-box w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center shadow-xs';
+      check.innerHTML = '<span class="material-symbols-outlined text-[16px] font-bold">check</span>';
+    } else {
+      check.className = 'check-box w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center';
+      check.innerHTML = '';
+    }
+  }
+
+  window.selectMarket = function selectMarket(name) {
+    userState.market = name;
+    document.querySelectorAll('.market-card').forEach(card => setMarketCardStyle(card, card.dataset.market === name));
+    updateNextButtonState();
+  };
+
+  window.setBudget = function setBudget(value) {
+    const val = Math.max(20, Math.min(1000, Number(value) || 20));
+    userState.budget = val;
+    document.getElementById('budgetNumberInput').value = val;
+    document.getElementById('budgetRange').value = Math.min(180, val);
+    document.getElementById('budgetTextPreview').textContent = val;
+    updateBudgetPills();
+    updateNextButtonState();
+  };
+
+  window.onBudgetInputChange = function onBudgetInputChange(value) {
+    userState.budget = Math.max(0, Math.min(1000, Number(value) || 0));
+    document.getElementById('budgetRange').value = Math.max(20, Math.min(180, userState.budget || 20));
+    document.getElementById('budgetTextPreview').textContent = userState.budget || 0;
+    updateBudgetPills();
+    updateNextButtonState();
+  };
+
+  window.onBudgetRangeChange = function onBudgetRangeChange(value) { setBudget(Number(value)); };
+
+  function updateBudgetPills() {
+    document.querySelectorAll('.budget-pill').forEach(pill => {
+      const val = Number(pill.textContent.replace('$',''));
+      const selected = val === Number(userState.budget);
+      pill.className = selected
+        ? 'budget-pill py-2 rounded-xl text-xs font-bold border-2 border-primary bg-primary-fixed/40 text-on-primary-container active:scale-95 transition-all shadow-xs'
+        : 'budget-pill py-2 rounded-xl text-xs font-bold border border-surface-container-highest bg-surface-container-low text-on-surface active:scale-95 transition-all';
+    });
+  }
+
+  function setDaysCardStyle(card, selected) {
+    const check = card.querySelector('.days-check');
+    card.classList.toggle('border-primary', selected);
+    card.classList.toggle('bg-primary-fixed/20', selected);
+    card.classList.toggle('border-surface-container-high', !selected);
+    card.classList.toggle('bg-surface-container-lowest', !selected);
+    if (selected) {
+      check.className = 'days-check w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center';
+      check.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span>';
+    } else {
+      check.className = 'days-check w-5 h-5 rounded-full border-2 border-outline-variant flex items-center justify-center';
+      check.innerHTML = '';
+    }
+  }
+
+  window.selectDays = function selectDays(days) {
+    userState.days = Number(days);
+    document.querySelectorAll('.days-card').forEach(card => setDaysCardStyle(card, Number(card.dataset.days) === Number(days)));
+    updateNextButtonState();
+  };
+
+  window.changePeople = function changePeople(delta) {
+    userState.people = Math.max(1, Math.min(12, Number(userState.people) + Number(delta)));
+    document.getElementById('peopleCount').textContent = userState.people;
+  };
+
+  window.toggleGoal = function toggleGoal(btn, goal) {
+    const idx = userState.goals.indexOf(goal);
+    if (idx >= 0) userState.goals.splice(idx, 1); else userState.goals.push(goal);
+    applyChipSelectedStyle(btn, idx < 0);
+  };
+
+  function applyChipSelectedStyle(btn, selected) {
+    if (!btn) return;
+    const icon = btn.querySelector('.action-icon');
+    btn.classList.toggle('border-primary', selected);
+    btn.classList.toggle('bg-primary-fixed/60', selected);
+    btn.classList.toggle('text-on-primary-container', selected);
+    btn.classList.toggle('shadow-xs', selected);
+    btn.classList.toggle('border-surface-container-highest', !selected);
+    btn.classList.toggle('bg-surface-container-lowest', !selected);
+    btn.classList.toggle('text-on-surface', !selected);
+    if (icon) {
+      icon.textContent = selected ? '✓' : '+';
+      icon.classList.toggle('text-primary', selected);
+      icon.classList.toggle('text-on-surface-variant', !selected);
+    }
+  }
+
+  function applyAllergyStyle(btn, selected) {
+    const icon = btn.querySelector('.action-icon');
+    btn.classList.toggle('border-error', selected);
+    btn.classList.toggle('bg-error-container/50', selected);
+    btn.classList.toggle('text-error', selected);
+    btn.classList.toggle('border-surface-container-highest', !selected);
+    btn.classList.toggle('bg-surface-container-lowest', !selected);
+    btn.classList.toggle('text-on-surface', !selected);
+    if (icon) icon.textContent = selected ? '✓' : '+';
+  }
+
+  function syncAllergyUI() {
+    const btn = document.getElementById('noAllergiesBtn');
+    const container = document.getElementById('allergiesChipsContainer');
+    const icon = btn?.querySelector('.allergy-check');
+    if (btn && icon && container) {
+      if (userState.hasNoAllergies) {
+        btn.className = 'w-full mb-4 p-3.5 rounded-2xl border-2 border-secondary bg-secondary-fixed/40 text-on-secondary-container font-bold text-sm flex items-center justify-between active:scale-[0.98] transition-all';
+        icon.textContent = 'check_circle';
+        container.classList.add('opacity-40','pointer-events-none');
+      } else {
+        btn.className = 'w-full mb-4 p-3.5 rounded-2xl border border-surface-container-high bg-surface-container-lowest text-on-surface font-bold text-sm flex items-center justify-between active:scale-[0.98] transition-all';
+        icon.textContent = 'radio_button_unchecked';
+        container.classList.remove('opacity-40','pointer-events-none');
+      }
+      container.querySelectorAll('.allergy-chip').forEach(chip => {
+        const text = chip.querySelector('span')?.textContent || '';
+        const allergy = text.replace(/^\S+\s/,'').trim();
+        applyAllergyStyle(chip, userState.allergies.includes(allergy));
+      });
+    }
+  }
+
+  window.toggleNoAllergies = function toggleNoAllergies() {
+    userState.hasNoAllergies = !userState.hasNoAllergies;
+    if (userState.hasNoAllergies) userState.allergies = [];
+    syncAllergyUI();
+  };
+
+  window.toggleAllergy = function toggleAllergy(btn, allergy) {
+    if (userState.hasNoAllergies) return;
+    const idx = userState.allergies.indexOf(allergy);
+    if (idx >= 0) userState.allergies.splice(idx,1); else userState.allergies.push(allergy);
+    applyAllergyStyle(btn, idx < 0);
+  };
+
+  function renderAvoidTags() {
+    const container = document.getElementById('activeAvoidList');
+    if (!container) return;
+    container.innerHTML = '';
+    userState.avoidedItems.forEach(item => {
+      const chip = document.createElement('span');
+      chip.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-error-container/50 text-error font-semibold text-xs border border-error/20 animate-fadeIn';
+      chip.append(document.createTextNode(item));
+      const remove = document.createElement('button');
+      remove.type = 'button'; remove.textContent = '×'; remove.className = 'font-bold hover:scale-110 ml-0.5';
+      remove.onclick = () => { userState.avoidedItems = userState.avoidedItems.filter(x => x !== item); renderAvoidTags(); };
+      chip.appendChild(remove);
+      container.appendChild(chip);
+    });
+  }
+
+  window.addAvoidTag = function addAvoidTag(item) {
+    const clean = String(item).replace(/\+$/,'').trim();
+    if (clean && !userState.avoidedItems.includes(clean)) userState.avoidedItems.push(clean);
+    renderAvoidTags();
+  };
+  window.removeAvoidTag = function removeAvoidTag(item) { userState.avoidedItems = userState.avoidedItems.filter(x => x !== item); renderAvoidTags(); };
+  window.handleAvoidKeypress = function handleAvoidKeypress(e) { if (e.key === 'Enter') { e.preventDefault(); addCustomAvoid(); } };
+  window.addCustomAvoid = function addCustomAvoid() {
+    const input = document.getElementById('avoidSearchInput');
+    const value = input.value.trim();
+    if (value) addAvoidTag(value);
+    input.value = '';
+  };
+  window.clearAvoidList = function clearAvoidList() { userState.avoidedItems = []; renderAvoidTags(); };
+
+  function updateSummaryView() {
+    document.getElementById('summaryMarket').textContent = userState.market || 'Sin seleccionar';
+    document.getElementById('summaryBudgetAndDays').textContent = `${money(userState.budget)} máx • ${userState.days} días • ${userState.people} ${userState.people === 1 ? 'persona' : 'personas'}`;
+    const goals = document.getElementById('summaryGoals');
+    goals.innerHTML = '';
+    if (!userState.goals.length) goals.innerHTML = '<span class="text-xs text-on-surface-variant italic">Sin prioridad específica: menú equilibrado general.</span>';
+    userState.goals.forEach(goal => {
+      const s = document.createElement('span');
+      s.className = 'px-2.5 py-1 rounded-full bg-primary-fixed/50 text-on-primary-container text-xs font-bold';
+      s.textContent = `✓ ${goal}`;
+      goals.appendChild(s);
+    });
+    const allergiesText = userState.hasNoAllergies || !userState.allergies.length ? 'Sin alergias declaradas.' : `Alergias: ${userState.allergies.join(', ')}.`;
+    const avoidText = userState.avoidedItems.length ? `Evitar: ${userState.avoidedItems.join(', ')}.` : 'Sin ingredientes excluidos.';
+    document.getElementById('summaryRestrictions').textContent = `${allergiesText} ${avoidText}`;
+  }
+
+  function isMealAllowed(meal) {
+    if (!userState.hasNoAllergies && meal.allergens.some(a => userState.allergies.includes(a))) return false;
+    const blocked = userState.avoidedItems.map(normalize).filter(Boolean);
+    if (!blocked.length) return true;
+    const haystack = normalize([meal.name, ...meal.ingredients.map(i => i.name)].join(' '));
+    return !blocked.some(term => haystack.includes(term));
+  }
+
+  function mealBaseCost(meal) { return meal.ingredients.reduce((sum, i) => sum + Number(i.cost), 0); }
+
+  function getCandidates(cheapest = false) {
+    let candidates = mealCatalog.filter(isMealAllowed);
+    if (!candidates.length) return [];
+    candidates = candidates.map(meal => {
+      let score = userState.goals.reduce((n, goal) => n + (meal.tags.includes(goal) ? 3 : 0), 0);
+      if (!userState.goals.length && meal.tags.includes('Equilibrado')) score += 2;
+      if (userState.goals.includes('Económico')) score += Math.max(0, 3 - mealBaseCost(meal));
+      return { meal, score, cost: mealBaseCost(meal) };
+    });
+    candidates.sort((a,b) => cheapest ? a.cost - b.cost || b.score - a.score : b.score - a.score || a.cost - b.cost);
+    return candidates.map(x => x.meal);
+  }
+
+  function buildPlan({ cheapest = false, days = userState.days } = {}) {
+    const candidates = getCandidates(cheapest);
+    if (!candidates.length) return { meals: [], shopping: [], total: Infinity, cooked: [] };
+    const count = Math.max(1, Number(days));
+    const meals = [];
+    for (let i = 0; i < count; i++) {
+      let meal;
+      if (cheapest) {
+        const pool = candidates.slice(0, Math.min(5, candidates.length));
+        meal = pool[i % pool.length];
+      } else {
+        meal = candidates[i % candidates.length];
+      }
+      meals.push({ ...meal, dayIndex: i });
+    }
+    const shoppingMap = new Map();
+    const factor = marketFactors[userState.market] || 1;
+    meals.forEach(meal => meal.ingredients.forEach(ing => {
+      const key = `${ing.category}|${ing.name}|${ing.unit}`;
+      const prior = shoppingMap.get(key) || { name: ing.name, qty: 0, unit: ing.unit, category: ing.category, cost: 0, checked: false };
+      prior.qty += Number(ing.qty) * Number(userState.people);
+      prior.cost += Number(ing.cost) * Number(userState.people) * factor;
+      shoppingMap.set(key, prior);
+    }));
+    const shopping = [...shoppingMap.values()].map(x => ({ ...x, qty: Number(x.qty.toFixed(2)), cost: Number(x.cost.toFixed(2)) }));
+    const total = Number(shopping.reduce((sum, i) => sum + i.cost, 0).toFixed(2));
+    return { meals, shopping, total, cooked: Array(meals.length).fill(false) };
+  }
+
+  window.startMenuGeneration = function startMenuGeneration() {
+    if (!userState.market) { userState.step = 1; renderStep(); return; }
+    const overlay = document.getElementById('generationLoadingScreen');
+    overlay.classList.remove('hidden');
+    document.getElementById('finishGenerationBox').classList.add('hidden');
+    document.getElementById('genStep3').className = 'flex items-center gap-3 text-xs font-semibold text-on-surface-variant';
+    document.getElementById('genStep3').innerHTML = '<span class="material-symbols-outlined text-base animate-pulse text-primary">radio_button_checked</span><span>Ajustando canasta a tu presupuesto</span>';
+    document.getElementById('genStep4').className = 'flex items-center gap-3 text-xs font-medium text-on-surface-variant/50';
+    document.getElementById('genStep4').innerHTML = '<span class="material-symbols-outlined text-base">radio_button_unchecked</span><span>Preparando recetas express</span>';
+
+    pendingPlan = buildPlan({ cheapest: false, days: userState.days });
+    setTimeout(() => {
+      if (!Number.isFinite(pendingPlan.total)) {
+        overlay.classList.add('hidden');
+        showToast('No encontramos platos compatibles con todas las restricciones.');
+        userState.step = 5; renderStep();
+        return;
+      }
+      document.getElementById('genStep3').className = 'flex items-center gap-3 text-xs font-semibold text-secondary';
+      document.getElementById('genStep3').innerHTML = `<span class="material-symbols-outlined text-base">check_circle</span><span>Canasta estimada en ${money(pendingPlan.total)}</span>`;
+      document.getElementById('genStep4').className = 'flex items-center gap-3 text-xs font-semibold text-secondary animate-fadeIn';
+      document.getElementById('genStep4').innerHTML = `<span class="material-symbols-outlined text-base">check_circle</span><span>${pendingPlan.meals.length} recetas listas para ${userState.people} ${userState.people === 1 ? 'persona' : 'personas'}</span>`;
+      if (pendingPlan.total > userState.budget) {
+        setTimeout(() => {
+          overlay.classList.add('hidden');
+          openBudgetIssue(pendingPlan.total - userState.budget);
+        }, 450);
+      } else {
+        currentPlan = pendingPlan;
+        pendingPlan = null;
+        document.getElementById('finishGenerationBox').classList.remove('hidden');
+      }
+    }, 900);
+  };
+
+  function openBudgetIssue(missing) {
+    document.getElementById('budgetMissingAmount').textContent = money(missing);
+    const modal = document.getElementById('budgetIssueModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+  function closeBudgetIssue() {
+    const modal = document.getElementById('budgetIssueModal');
+    modal.classList.add('hidden'); modal.classList.remove('flex');
+  }
+
+  window.optimizePlanForBudget = function optimizePlanForBudget() {
+    const optimized = buildPlan({ cheapest: true, days: userState.days });
+    if (optimized.total <= userState.budget) {
+      currentPlan = optimized; pendingPlan = null; closeBudgetIssue();
+      document.getElementById('generationLoadingScreen').classList.remove('hidden');
+      document.getElementById('finishGenerationBox').classList.remove('hidden');
+      showToast(`Optimizado: ${money(currentPlan.total)} estimados.`);
+    } else {
+      pendingPlan = optimized;
+      document.getElementById('budgetMissingAmount').textContent = money(optimized.total - userState.budget);
+      showToast('Aún no alcanza. Prueba con menos días.');
+    }
+  };
+
+  window.reduceDaysToFit = function reduceDaysToFit() {
+    for (let d = Math.max(1, Number(userState.days) - 1); d >= 1; d--) {
+      const plan = buildPlan({ cheapest: true, days: d });
+      if (plan.total <= userState.budget) {
+        userState.days = d; currentPlan = plan; pendingPlan = null; closeBudgetIssue();
+        document.getElementById('generationLoadingScreen').classList.remove('hidden');
+        document.getElementById('finishGenerationBox').classList.remove('hidden');
+        showToast(`Ajustado a ${d} ${d === 1 ? 'día' : 'días'} dentro del presupuesto.`);
+        return;
+      }
+    }
+    showToast('Incluso 1 día supera el presupuesto con estas restricciones.');
+  };
+
+  window.closeBudgetIssueAndEdit = function closeBudgetIssueAndEdit() {
+    closeBudgetIssue();
+    document.getElementById('generationLoadingScreen').classList.add('hidden');
+    userState.step = 2;
+    renderStep();
+  };
+
+  window.revealDashboard = function revealDashboard() {
+    if (!currentPlan.meals.length) currentPlan = pendingPlan || buildPlan({days:userState.days});
+    pendingPlan = null;
+    document.getElementById('generationLoadingScreen').classList.add('hidden');
+    document.getElementById('onboardingContainer').classList.add('hidden');
+    const dash = document.getElementById('dashboardContainer');
+    dash.classList.remove('hidden'); dash.classList.add('flex');
+    persistState(true);
+    renderApplication();
+    navigateTo('home');
+  };
+
+  function renderApplication() {
+    renderDashboard();
+    renderWeekView();
+    renderShoppingView();
+    renderRecipesView();
+  }
+
+  function renderDashboard() {
+    const total = Number(currentPlan.total || 0);
+    const free = Number((userState.budget - total).toFixed(2));
+    const pct = userState.budget > 0 ? Math.min(100, (total / userState.budget) * 100) : 0;
+    document.getElementById('dashHeaderMarket').textContent = userState.market || 'Tienda';
+    document.getElementById('dashMarketCardName').textContent = userState.market || 'Tienda';
+    document.getElementById('dashDaysBadge').textContent = currentPlan.meals.length || userState.days;
+    document.getElementById('dashSpentVal').textContent = money(total);
+    document.getElementById('dashMaxVal').textContent = `/ ${money(userState.budget)}`;
+    document.getElementById('dashFreeVal').textContent = free >= 0 ? `+${money(free)} proyectado libre` : `${money(Math.abs(free))} sobre el límite`;
+    document.getElementById('dashFreeVal2').textContent = free >= 0 ? `+${money(free)}` : `-${money(Math.abs(free))}`;
+    document.getElementById('dashSpentVal2').textContent = money(total);
+    document.getElementById('dashProgressFill').style.width = `${pct}%`;
+    document.getElementById('dashPercentVal').textContent = `${pct.toFixed(1)}% utilizado`;
+    const status = document.getElementById('dashBudgetStatus');
+    status.innerHTML = free >= 0 ? '<span class="material-symbols-outlined text-[14px]">savings</span> Dentro de meta ✓' : '<span class="material-symbols-outlined text-[14px]">warning</span> Sobre presupuesto';
+    status.className = free >= 0
+      ? 'inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary-fixed/60 text-secondary text-xs font-bold'
+      : 'inline-flex items-center gap-1 px-3 py-1 rounded-full bg-error-container/60 text-error text-xs font-bold';
+
+    const goals = document.getElementById('dashActiveGoalsContainer'); goals.innerHTML='';
+    const active = userState.goals.length ? userState.goals : ['Equilibrado general'];
+    active.forEach(g => {
+      const c=document.createElement('span'); c.className='px-3 py-1 rounded-full bg-secondary-fixed/50 text-secondary text-xs font-bold'; c.textContent=`✓ ${g}`; goals.appendChild(c);
+    });
+    if (!userState.hasNoAllergies && userState.allergies.length) {
+      const c=document.createElement('span'); c.className='px-3 py-1 rounded-full bg-error-container/50 text-error text-xs font-bold'; c.textContent=`Sin ${userState.allergies.join(', ')}`; goals.appendChild(c);
+    }
+    if (userState.avoidedItems.length) {
+      const c=document.createElement('span'); c.className='px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-xs font-bold'; c.textContent=`Evitar: ${userState.avoidedItems.slice(0,2).join(', ')}`; goals.appendChild(c);
+    }
+
+    renderHomeCalendar();
+    const meal = currentPlan.meals[0];
+    if (meal) {
+      document.getElementById('homeMealName').textContent = meal.name;
+      document.getElementById('homeMealDescription').textContent = meal.tags.slice(0,3).join(' • ');
+      document.getElementById('homeMealCost').textContent = `${money(mealCostForPlan(meal))} / comida`;
+    }
+  }
+
+  function mealCostForPlan(meal) {
+    const factor = marketFactors[userState.market] || 1;
+    return Number((mealBaseCost(meal) * userState.people * factor).toFixed(2));
+  }
+
+  function renderHomeCalendar() {
+    const cont = document.getElementById('calendarDaysList');
+    cont.innerHTML='';
+    currentPlan.meals.forEach((meal,i) => {
+      const b=document.createElement('button');
+      b.className = i===0 ? 'flex flex-col items-center justify-center min-w-[52px] py-2 px-2 rounded-2xl bg-primary-container text-white shadow-sm flex-shrink-0' : 'flex flex-col items-center justify-center min-w-[48px] py-2 px-1.5 rounded-2xl bg-surface-container-low text-on-surface flex-shrink-0';
+      b.onclick=()=>{ navigateTo('week'); setTimeout(()=>selectWeekDay(i),0); };
+      b.innerHTML=`<span class="text-[10px] font-${i===0?'extrabold':'semibold'}">${i===0?'Hoy':'Día'}</span><span class="text-sm font-extrabold mt-0.5">D${i+1}</span><span class="w-1.5 h-1.5 rounded-full ${currentPlan.cooked?.[i]?'bg-secondary':i===0?'bg-white':'bg-outline-variant'} mt-1"></span>`;
+      cont.appendChild(b);
+    });
+  }
+
+  function renderWeekView() {
+    const tabs = document.getElementById('weekDayTabs');
+    const list = document.getElementById('weekMealsList');
+    tabs.innerHTML=''; list.innerHTML='';
+    currentPlan.meals.forEach((meal,i) => {
+      const tab=document.createElement('button');
+      tab.className=`week-tab min-w-[56px] px-3 py-2 rounded-full text-xs font-bold ${i===0?'bg-primary text-white':'bg-surface-container text-on-surface'}`;
+      tab.textContent=`Día ${i+1}`; tab.dataset.index=i; tab.onclick=()=>selectWeekDay(i); tabs.appendChild(tab);
+
+      const card=document.createElement('article'); card.id=`weekMeal${i}`; card.className='rounded-3xl bg-surface-container-lowest border border-surface-container-high p-4 shadow-sm';
+      card.innerHTML=`<div class="flex gap-3"><div class="w-16 h-16 rounded-2xl bg-primary-fixed/40 flex items-center justify-center text-3xl flex-shrink-0">${meal.emoji}</div><div class="flex-1 min-w-0"><div class="flex items-center justify-between gap-2"><span class="text-[10px] font-bold uppercase text-primary">Día ${i+1}</span><span class="text-xs font-bold text-secondary">${money(mealCostForPlan(meal))}</span></div><h3 class="font-extrabold text-sm text-on-surface mt-1">${meal.name}</h3><p class="text-xs text-on-surface-variant mt-1">${meal.time} min • ${meal.tags.slice(0,3).join(' • ')}</p></div></div><div class="flex gap-2 mt-3"><button class="flex-1 py-2.5 rounded-full bg-surface-container text-xs font-bold" onclick="openRecipeByIndex(${i})">Ver receta</button><button class="px-4 py-2.5 rounded-full ${currentPlan.cooked?.[i]?'bg-secondary text-white':'bg-secondary-fixed/50 text-secondary'} text-xs font-bold" onclick="toggleCooked(${i}, this)">${currentPlan.cooked?.[i]?'✓ Preparado':'Marcar preparado'}</button></div>`;
+      list.appendChild(card);
+    });
+  }
+
+  window.selectWeekDay = function selectWeekDay(index) {
+    document.querySelectorAll('.week-tab').forEach((tab,i) => {
+      const active=i===Number(index);
+      tab.className=`week-tab min-w-[56px] px-3 py-2 rounded-full text-xs font-bold ${active?'bg-primary text-white':'bg-surface-container text-on-surface'}`;
+    });
+    document.getElementById(`weekMeal${index}`)?.scrollIntoView({behavior:'smooth',block:'center'});
+  };
+
+  window.toggleCooked = function toggleCooked(index, button) {
+    currentPlan.cooked = currentPlan.cooked || Array(currentPlan.meals.length).fill(false);
+    currentPlan.cooked[index] = !currentPlan.cooked[index];
+    persistState(true); renderWeekView(); renderHomeCalendar();
+    if (button) showToast(currentPlan.cooked[index] ? 'Comida marcada como preparada.' : 'Marcado eliminado.');
+  };
+
+  function formatQty(qty, unit) {
+    const n = Number(qty);
+    if (unit === 'g' && n >= 1000) return `${(n/1000).toFixed(n % 1000 ? 1 : 0)} kg`;
+    return `${Number.isInteger(n) ? n : n.toFixed(1)} ${unit}`;
+  }
+
+  function renderShoppingView() {
+    const list=document.getElementById('shoppingList'); list.innerHTML='';
+    document.getElementById('shoppingTotal').textContent=money(currentPlan.total);
+    const groups={};
+    currentPlan.shopping.forEach((item,index)=>{ (groups[item.category] ||= []).push({item,index}); });
+    const categoryEmoji={'Carnes y proteínas':'🥩','Frutas y verduras':'🥬','Granos y despensa':'🌾','Lácteos y huevos':'🥛'};
+    Object.entries(groups).forEach(([category,items])=>{
+      const sec=document.createElement('section'); sec.className='space-y-2';
+      const title=document.createElement('div'); title.className='flex items-center justify-between'; title.innerHTML=`<h2 class="font-extrabold text-sm">${categoryEmoji[category]||'🛒'} ${category}</h2><span class="text-[10px] font-bold bg-surface-container px-2 py-0.5 rounded-full">${items.length} ítems</span>`; sec.appendChild(title);
+      items.forEach(({item,index})=>{
+        const row=document.createElement('button'); row.type='button'; row.className='w-full p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex items-center gap-3 text-left'; row.onclick=()=>toggleShoppingItem(index);
+        row.innerHTML=`<span class="w-7 h-7 rounded-full ${item.checked?'bg-secondary text-white':'bg-surface-container-high text-transparent'} flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[17px]">check</span></span><span class="flex-1 min-w-0"><span class="block text-sm font-bold ${item.checked?'line-through text-on-surface-variant':'text-on-surface'}">${item.name}</span><span class="text-xs text-on-surface-variant">${formatQty(item.qty,item.unit)}</span></span><span class="text-xs font-extrabold">${money(item.cost)}</span>`;
+        sec.appendChild(row);
+      }); list.appendChild(sec);
+    });
+    updateShoppingProgress();
+  }
+
+  window.toggleShoppingItem = function toggleShoppingItem(index) {
+    currentPlan.shopping[index].checked = !currentPlan.shopping[index].checked;
+    persistState(true); renderShoppingView();
+  };
+
+  function updateShoppingProgress() {
+    const total=currentPlan.shopping.length;
+    const checked=currentPlan.shopping.filter(x=>x.checked).length;
+    const pct=total ? Math.round(checked/total*100) : 0;
+    document.getElementById('shoppingProgressText').textContent=`${checked} de ${total} comprados`;
+    document.getElementById('shoppingProgressPct').textContent=`${pct}%`;
+    document.getElementById('shoppingProgressBar').style.width=`${pct}%`;
+  }
+
+  function renderRecipesView() {
+    const list=document.getElementById('recipesList'); list.innerHTML='';
+    currentPlan.meals.forEach((meal,i)=>{
+      const card=document.createElement('button'); card.type='button'; card.className='w-full p-3.5 rounded-2xl bg-surface-container-lowest border border-surface-container-high flex items-center gap-3 text-left active:scale-[0.99]'; card.onclick=()=>openRecipeByIndex(i);
+      card.innerHTML=`<span class="w-14 h-14 rounded-2xl bg-primary-fixed/40 flex items-center justify-center text-2xl flex-shrink-0">${meal.emoji}</span><span class="flex-1 min-w-0"><span class="text-[10px] uppercase font-bold text-primary">Día ${i+1} • ${meal.time} min</span><span class="block font-extrabold text-sm text-on-surface mt-0.5">${meal.name}</span><span class="block text-xs text-on-surface-variant mt-1">${meal.ingredients.length} ingredientes</span></span><span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>`;
+      list.appendChild(card);
+    });
+  }
+
+  window.openRecipeByIndex = function openRecipeByIndex(index) {
+    const meal=currentPlan.meals[Number(index)]; if(!meal) return;
+    const content=document.getElementById('recipeModalContent');
+    content.innerHTML=`<div class="w-12 h-1.5 rounded-full bg-surface-container-highest mx-auto mb-4"></div><div class="flex items-start justify-between gap-3"><div><span class="text-[10px] uppercase font-extrabold text-primary">Día ${Number(index)+1} • ${meal.time} min</span><h2 class="text-xl font-extrabold mt-1">${meal.emoji} ${meal.name}</h2></div><button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center" onclick="closeRecipeModal()"><span class="material-symbols-outlined">close</span></button></div><div class="mt-5"><h3 class="font-extrabold text-sm mb-2">Ingredientes para ${userState.people} ${userState.people===1?'persona':'personas'}</h3><div class="space-y-2">${meal.ingredients.map(i=>`<div class="flex justify-between text-sm p-2.5 rounded-xl bg-surface-container-low"><span>${i.name}</span><strong>${formatQty(i.qty*userState.people,i.unit)}</strong></div>`).join('')}</div></div><div class="mt-5"><h3 class="font-extrabold text-sm mb-2">Preparación express</h3><ol class="space-y-2">${meal.steps.map((s,i)=>`<li class="flex gap-2 text-sm"><span class="w-6 h-6 rounded-full bg-primary-fixed text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">${i+1}</span><span>${s}</span></li>`).join('')}</ol></div>`;
+    const modal=document.getElementById('recipeModal'); modal.classList.remove('hidden'); modal.classList.add('flex');
+  };
+  window.closeRecipeModal = function closeRecipeModal(){ const m=document.getElementById('recipeModal'); m.classList.add('hidden'); m.classList.remove('flex'); };
+
+  window.navigateTo = function navigateTo(view) {
+    currentView=view;
+    document.querySelectorAll('.app-view').forEach(el=>el.classList.toggle('hidden', el.dataset.view !== view));
+    document.querySelectorAll('.app-nav-btn').forEach(btn=>{
+      const active=btn.dataset.nav===view;
+      btn.classList.toggle('text-primary',active); btn.classList.toggle('font-bold',active);
+      btn.classList.toggle('text-on-surface-variant',!active);
+    });
+    if (view==='week') renderWeekView();
+    if (view==='shopping') renderShoppingView();
+    if (view==='recipes') renderRecipesView();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  window.restartOnboarding = function restartOnboarding() {
+    document.getElementById('preferencesModal').classList.add('hidden');
+    document.getElementById('dashboardContainer').classList.add('hidden');
+    document.getElementById('dashboardContainer').classList.remove('flex');
+    document.getElementById('finishGenerationBox').classList.add('hidden');
+    document.getElementById('onboardingContainer').classList.remove('hidden');
+    userState.step=1; syncAllInputs(); renderStep();
+  };
+
+  window.openPreferencesModal = function openPreferencesModal() {
+    modalDraft = JSON.parse(JSON.stringify(userState));
+    const modal=document.getElementById('preferencesModal'); modal.classList.remove('hidden');
+    document.getElementById('modalBudgetInput').value=modalDraft.budget;
+    document.getElementById('modalDaysSelect').value=String([3,5,7].includes(Number(modalDraft.days))?modalDraft.days:7);
+    document.getElementById('modalPeopleCount').textContent=modalDraft.people;
+    renderModalMarketStyles(); renderModalGoals(); renderModalAllergies(); renderModalAvoid();
+  };
+  window.closePreferencesModal = function closePreferencesModal(){ document.getElementById('preferencesModal').classList.add('hidden'); modalDraft=null; };
+
+  function renderModalMarketStyles() {
+    const mapping={'Supermaxi':'Supermaxi','Coral':'Coral Hipermercados','Gran Akí':'Gran Akí','Tía':'Almacenes Tía'};
+    document.querySelectorAll('.modal-market-pill').forEach(btn=>{
+      const selected=mapping[btn.textContent.trim()]===modalDraft.market;
+      btn.className=selected?'modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary-fixed/40 text-on-primary-container':'modal-market-pill px-3 py-1.5 rounded-full text-xs font-bold border border-surface-container bg-surface-container-lowest text-on-surface';
+    });
+  }
+  window.updateModalMarket = function updateModalMarket(name){ if(!modalDraft) return; modalDraft.market=name; renderModalMarketStyles(); };
+
+  function renderModalGoals() {
+    const all=['Alto en proteína','Saludable','Más verduras','Rápido','Económico','Equilibrado','Antiinflamatorio','Favoritos de familia','Reconfortante','Batch cooking','Bajo en carbos'];
+    const cont=document.getElementById('modalGoalsContainer'); cont.innerHTML='';
+    all.forEach(goal=>{
+      const active=modalDraft.goals.includes(goal); const b=document.createElement('button'); b.type='button';
+      b.className=active?'px-3 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary-fixed/60 text-on-primary-container':'px-3 py-1.5 rounded-full text-xs font-medium border border-surface-container-high bg-surface-container-lowest text-on-surface';
+      b.textContent=`${active?'✓':'+'} ${goal}`; b.onclick=()=>{ const i=modalDraft.goals.indexOf(goal); if(i>=0)modalDraft.goals.splice(i,1);else modalDraft.goals.push(goal); renderModalGoals(); }; cont.appendChild(b);
+    });
+  }
+
+  function renderModalAllergies() {
+    const all=['Lactosa','Gluten','Maní','Frutos secos','Mariscos','Huevo','Pescado'];
+    const noBtn=document.getElementById('modalNoAllergiesBtn'); noBtn.textContent=modalDraft.hasNoAllergies?'Sin alergias ✓':'Marcar sin alergias';
+    noBtn.className=modalDraft.hasNoAllergies?'text-xs font-bold text-secondary':'text-xs font-bold text-on-surface-variant';
+    const cont=document.getElementById('modalAllergiesContainer'); cont.innerHTML='';
+    all.forEach(a=>{ const active=modalDraft.allergies.includes(a); const b=document.createElement('button'); b.type='button'; b.disabled=modalDraft.hasNoAllergies; b.className=active?'px-3 py-1.5 rounded-full text-xs font-bold border border-error bg-error-container/50 text-error':'px-3 py-1.5 rounded-full text-xs font-medium border border-surface-container-high bg-surface-container-lowest text-on-surface'; b.textContent=`${active?'✓':'+'} ${a}`; b.onclick=()=>{ const i=modalDraft.allergies.indexOf(a); if(i>=0)modalDraft.allergies.splice(i,1);else modalDraft.allergies.push(a); renderModalAllergies(); }; cont.appendChild(b); });
+  }
+  window.toggleModalNoAllergies = function toggleModalNoAllergies(){ if(!modalDraft)return; modalDraft.hasNoAllergies=!modalDraft.hasNoAllergies; if(modalDraft.hasNoAllergies)modalDraft.allergies=[]; renderModalAllergies(); };
+  window.changeModalPeople = function changeModalPeople(delta){ if(!modalDraft)return; modalDraft.people=Math.max(1,Math.min(12,Number(modalDraft.people)+Number(delta))); document.getElementById('modalPeopleCount').textContent=modalDraft.people; };
+
+  function renderModalAvoid(){ const cont=document.getElementById('modalAvoidContainer'); cont.innerHTML=''; modalDraft.avoidedItems.forEach(item=>{ const b=document.createElement('button'); b.type='button'; b.className='px-2.5 py-1 rounded-full bg-error-container/50 text-error text-xs font-bold'; b.textContent=`${item} ×`; b.onclick=()=>{ modalDraft.avoidedItems=modalDraft.avoidedItems.filter(x=>x!==item); renderModalAvoid(); }; cont.appendChild(b); }); }
+  window.addModalAvoid = function addModalAvoid(){ if(!modalDraft)return; const input=document.getElementById('modalAvoidInput'); const val=input.value.trim(); if(val&&!modalDraft.avoidedItems.includes(val))modalDraft.avoidedItems.push(val); input.value=''; renderModalAvoid(); };
+
+  window.applyModalChanges = function applyModalChanges() {
+    if(!modalDraft)return;
+    const budget=Number(document.getElementById('modalBudgetInput').value);
+    if(budget>=20) modalDraft.budget=budget;
+    modalDraft.days=Number(document.getElementById('modalDaysSelect').value);
+    userState={...userState,...modalDraft,step:1,totalSteps:7};
+    closePreferencesModal();
+    const newPlan=buildPlan({days:userState.days});
+    if(!Number.isFinite(newPlan.total)){ showToast('No hay platos compatibles con todas las restricciones.'); restartOnboarding(); userState.step=5; renderStep(); return; }
+    if(newPlan.total>userState.budget){ pendingPlan=newPlan; openBudgetIssue(newPlan.total-userState.budget); return; }
+    currentPlan=newPlan; persistState(true); renderApplication(); navigateTo(currentView); showToast('Cambios aplicados y menú recalculado.');
+  };
+
+  window.showToast = function showToast(message) {
+    const toast=document.getElementById('toast'); toast.textContent=message; toast.classList.remove('hidden'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>toast.classList.add('hidden'),2200);
+  };
+})();
+</script>
+
+</body></html>

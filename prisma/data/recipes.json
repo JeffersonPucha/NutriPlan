@@ -1,0 +1,603 @@
+[
+  {
+    "id": "pollo_quinoa",
+    "name": "Pollo al limón con quinoa y aguacate",
+    "time": 25,
+    "tags": [
+      "Alto en proteína",
+      "Saludable",
+      "Equilibrado",
+      "Rápido"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Pechuga de pollo",
+        "qty": 180,
+        "unit": "g",
+        "cost": 1.55,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Quinoa",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.48,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.5,
+        "unit": "unid",
+        "cost": 0.55,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.22,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Limón",
+        "qty": 0.5,
+        "unit": "unid",
+        "cost": 0.12,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina la quinoa hasta que quede suave.",
+      "Dora el pollo con limón y especias.",
+      "Corta el tomate y el aguacate.",
+      "Sirve todo en un bowl y mezcla al gusto."
+    ]
+  },
+  {
+    "id": "lentejas_arroz",
+    "name": "Lentejas con arroz y vegetales",
+    "time": 30,
+    "tags": [
+      "Económico",
+      "Saludable",
+      "Más verduras",
+      "Batch cooking",
+      "Antiinflamatorio"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Lentejas",
+        "qty": 90,
+        "unit": "g",
+        "cost": 0.28,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Arroz",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.22,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.12,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Pimiento",
+        "qty": 60,
+        "unit": "g",
+        "cost": 0.18,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 50,
+        "unit": "g",
+        "cost": 0.1,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina las lentejas hasta que estén tiernas.",
+      "Prepara el arroz aparte.",
+      "Saltea las verduras picadas.",
+      "Mezcla las lentejas con las verduras y acompaña con arroz."
+    ]
+  },
+  {
+    "id": "pasta_carne",
+    "name": "Pasta integral con carne y tomate",
+    "time": 25,
+    "tags": [
+      "Alto en proteína",
+      "Equilibrado",
+      "Reconfortante",
+      "Favoritos de familia",
+      "Rápido"
+    ],
+    "allergens": [
+      "Gluten"
+    ],
+    "ingredients": [
+      {
+        "name": "Pasta integral",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.36,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Carne molida magra",
+        "qty": 140,
+        "unit": "g",
+        "cost": 1.25,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Tomate",
+        "qty": 140,
+        "unit": "g",
+        "cost": 0.3,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 40,
+        "unit": "g",
+        "cost": 0.08,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Hierve la pasta según el empaque.",
+      "Dora la carne molida.",
+      "Añade tomate y cebolla picados.",
+      "Mezcla la salsa con la pasta y sirve."
+    ]
+  },
+  {
+    "id": "tortilla_vegetales",
+    "name": "Tortilla de vegetales con arroz",
+    "time": 20,
+    "tags": [
+      "Económico",
+      "Más verduras",
+      "Rápido",
+      "Favoritos de familia"
+    ],
+    "allergens": [
+      "Huevo"
+    ],
+    "ingredients": [
+      {
+        "name": "Huevo",
+        "qty": 2,
+        "unit": "unid",
+        "cost": 0.55,
+        "category": "Lácteos y huevos"
+      },
+      {
+        "name": "Arroz",
+        "qty": 70,
+        "unit": "g",
+        "cost": 0.2,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Espinaca",
+        "qty": 60,
+        "unit": "g",
+        "cost": 0.28,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.18,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina el arroz.",
+      "Bate los huevos.",
+      "Añade espinaca y tomate picados.",
+      "Cocina la tortilla a fuego medio y sirve con arroz."
+    ]
+  },
+  {
+    "id": "pescado_papas",
+    "name": "Pescado al horno con papas y ensalada",
+    "time": 35,
+    "tags": [
+      "Alto en proteína",
+      "Saludable",
+      "Bajo en carbos"
+    ],
+    "allergens": [
+      "Pescado"
+    ],
+    "ingredients": [
+      {
+        "name": "Filete de pescado",
+        "qty": 180,
+        "unit": "g",
+        "cost": 1.75,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Papa",
+        "qty": 220,
+        "unit": "g",
+        "cost": 0.38,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 70,
+        "unit": "g",
+        "cost": 0.2,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.18,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Corta las papas y hornéalas.",
+      "Sazona el pescado y colócalo en el horno.",
+      "Prepara una ensalada sencilla.",
+      "Sirve el pescado con papas y ensalada."
+    ]
+  },
+  {
+    "id": "cerdo_arroz",
+    "name": "Cerdo salteado con arroz y brócoli",
+    "time": 25,
+    "tags": [
+      "Alto en proteína",
+      "Equilibrado",
+      "Rápido"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Lomo de cerdo",
+        "qty": 160,
+        "unit": "g",
+        "cost": 1.2,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Arroz",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.22,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Brócoli",
+        "qty": 120,
+        "unit": "g",
+        "cost": 0.32,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 60,
+        "unit": "g",
+        "cost": 0.1,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina el arroz.",
+      "Corta y saltea el cerdo.",
+      "Añade brócoli y zanahoria.",
+      "Sirve el salteado sobre el arroz."
+    ]
+  },
+  {
+    "id": "garbanzos_aguacate",
+    "name": "Ensalada de garbanzos y aguacate",
+    "time": 15,
+    "tags": [
+      "Saludable",
+      "Más verduras",
+      "Rápido",
+      "Bajo en carbos",
+      "Económico"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Garbanzos",
+        "qty": 130,
+        "unit": "g",
+        "cost": 0.42,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.5,
+        "unit": "unid",
+        "cost": 0.55,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.22,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.2,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Enjuaga los garbanzos.",
+      "Corta aguacate, tomate y pepino.",
+      "Mezcla todos los ingredientes.",
+      "Sazona con limón, sal y pimienta."
+    ]
+  },
+  {
+    "id": "arroz_pollo",
+    "name": "Arroz con pollo y verduras",
+    "time": 30,
+    "tags": [
+      "Económico",
+      "Alto en proteína",
+      "Favoritos de familia",
+      "Batch cooking",
+      "Equilibrado"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Pechuga de pollo",
+        "qty": 150,
+        "unit": "g",
+        "cost": 1.28,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Arroz",
+        "qty": 90,
+        "unit": "g",
+        "cost": 0.25,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Arvejas",
+        "qty": 60,
+        "unit": "g",
+        "cost": 0.15,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 70,
+        "unit": "g",
+        "cost": 0.11,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina el pollo en cubos.",
+      "Añade zanahoria y arvejas.",
+      "Incorpora el arroz y el agua necesaria.",
+      "Cocina a fuego bajo hasta que el arroz esté listo."
+    ]
+  },
+  {
+    "id": "pasta_garbanzos",
+    "name": "Pasta con garbanzos y espinaca",
+    "time": 20,
+    "tags": [
+      "Económico",
+      "Saludable",
+      "Rápido",
+      "Antiinflamatorio"
+    ],
+    "allergens": [
+      "Gluten"
+    ],
+    "ingredients": [
+      {
+        "name": "Pasta",
+        "qty": 95,
+        "unit": "g",
+        "cost": 0.3,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Garbanzos",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.32,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Espinaca",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.34,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.18,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina la pasta.",
+      "Saltea la espinaca y el tomate.",
+      "Añade los garbanzos.",
+      "Mezcla con la pasta y sirve."
+    ]
+  },
+  {
+    "id": "bowl_carne_frijol",
+    "name": "Bowl de carne, frijoles y arroz",
+    "time": 25,
+    "tags": [
+      "Alto en proteína",
+      "Reconfortante",
+      "Favoritos de familia",
+      "Batch cooking"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Carne molida magra",
+        "qty": 130,
+        "unit": "g",
+        "cost": 1.16,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Frijoles",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.3,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Arroz",
+        "qty": 75,
+        "unit": "g",
+        "cost": 0.21,
+        "category": "Granos y despensa"
+      },
+      {
+        "name": "Tomate",
+        "qty": 80,
+        "unit": "g",
+        "cost": 0.18,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Cocina el arroz.",
+      "Dora la carne con especias suaves.",
+      "Calienta los frijoles.",
+      "Sirve todo en un bowl con tomate fresco."
+    ]
+  },
+  {
+    "id": "crema_verduras",
+    "name": "Crema de verduras con tostadas de maíz",
+    "time": 25,
+    "tags": [
+      "Económico",
+      "Más verduras",
+      "Saludable",
+      "Antiinflamatorio",
+      "Reconfortante"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Zapallo",
+        "qty": 180,
+        "unit": "g",
+        "cost": 0.28,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.16,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Papa",
+        "qty": 120,
+        "unit": "g",
+        "cost": 0.2,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tostadas de maíz",
+        "qty": 2,
+        "unit": "unid",
+        "cost": 0.26,
+        "category": "Granos y despensa"
+      }
+    ],
+    "steps": [
+      "Cocina zapallo, zanahoria y papa.",
+      "Licúa con parte del agua de cocción.",
+      "Ajusta sal y especias.",
+      "Sirve caliente con tostadas de maíz."
+    ]
+  },
+  {
+    "id": "pollo_ensalada",
+    "name": "Pollo a la plancha con ensalada fresca",
+    "time": 20,
+    "tags": [
+      "Alto en proteína",
+      "Saludable",
+      "Bajo en carbos",
+      "Rápido"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "name": "Pechuga de pollo",
+        "qty": 180,
+        "unit": "g",
+        "cost": 1.55,
+        "category": "Carnes y proteínas"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 90,
+        "unit": "g",
+        "cost": 0.26,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.2,
+        "category": "Frutas y verduras"
+      },
+      {
+        "name": "Tomate",
+        "qty": 100,
+        "unit": "g",
+        "cost": 0.22,
+        "category": "Frutas y verduras"
+      }
+    ],
+    "steps": [
+      "Sazona y cocina el pollo a la plancha.",
+      "Lava y corta las verduras.",
+      "Mezcla la ensalada con limón.",
+      "Sirve el pollo junto a la ensalada."
+    ]
+  }
+]
